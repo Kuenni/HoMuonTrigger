@@ -22,9 +22,10 @@ class EvsEtaPhi(Plot):
 	of the L1 muons
 	'''
 	def plotAverageEnergyAroundL1(self):
-		canvas = TCanvas('canvasAverageEnergy','Average energy',900,900)
+		canvas = TCanvas('canvasAverageEnergy','Average energy',900,800)
 		canvas.cd().SetLogz()
-		
+		canvas.cd().SetRightMargin(.15)
+
 		hSum = self.fileHandler.getHistogram('averageEnergy/averageEnergyAroundPoint' + self.key + '_SummedEnergy')
 		hCounter = self.fileHandler.getHistogram('averageEnergy/averageEnergyAroundPoint' + self.key + '_Counter')
 	
@@ -35,27 +36,21 @@ class EvsEtaPhi(Plot):
 					pass
 		hSum.GetXaxis().SetRangeUser(-0.6,0.6)
 		hSum.GetYaxis().SetRangeUser(-0.6,0.6)
-	#	hSum.SetStats(0)
-	#	hSum.GetXaxis().SetTitle('#Delta#eta')
-	#	hSum.GetYaxis().SetTitle('#Delta#phi')
 		hSum.GetZaxis().SetTitle('Reconstructed Energy / GeV')
-		hSum.SetTitle('Average Energy in HO tiles around L1 direction;#Delta#eta;#Delta#phi;Reconstructed Energy / GeV')
+		hSum.SetTitle(';#Delta#eta;#Delta#phi;Reconstructed Energy / GeV')#'Average Energy in HO tiles around L1 direction
 		hSum.Draw('colz')
-	#	hCounter.Draw('same,text')
-		
-		label = self.drawLabel()
-		
+						
 		canvas.Update()
 		
 		#Setup plot style
 		setupAxes(hSum)	
 		setStatBoxOptions(hSum,1100)
-		setStatBoxPosition(hSum)
-		setupPalette(hSum)
+		setStatBoxPosition(hSum,x1=.65,x2=.85)
+		setupPalette(hSum,x2ndc=.87)
 	
 		canvas.Update()
-		self.storeCanvas(canvas,'averageEnergy')
-		return canvas,hSum,label,hCounter,drawHoBoxes(canvas)
+		self.storeCanvas(canvas,'averageEnergy',marginRight=.15)
+		return canvas,hSum,hCounter,drawHoBoxes(canvas)
 	
 	
 	def calculateCentralFractionInTight(self):
@@ -87,9 +82,6 @@ class EvsEtaPhi(Plot):
 		hSum.SetMaximum(2)
 		hSum.Draw('colz')
 		setupEAvplot(hCounter,same=True,limitForAll=0.3).Draw('same,text')
-	
-		label = getLabelCmsPrivateSimulation()
-		label.Draw()
 		
 		canvas.Update()		
 				
@@ -99,7 +91,7 @@ class EvsEtaPhi(Plot):
 		self.storeCanvas(canvas, 'averageEmax')
 		hCounter.SaveAs('histogramEMaxCounter.root')
 		
-		return canvas,hSum,label,hCounter
+		return canvas,hSum,hCounter
 	
 	def plot1DEnergyAroundL1(self):	
 		'''
@@ -250,7 +242,7 @@ class EvsEtaPhi(Plot):
 		return canvas, histNormal,label#,histNew,label2
 	
 	def plotEavForTightMuons(self):
-		canvas = TCanvas('canvasEavTightMuons','EAv Tight muons',1200,1200)
+		canvas = TCanvas('canvasEavTightMuons','EAv Tight muons',800,800)
 		canvas.cd().SetLogz()
 			
 		hSum = self.fileHandler.getHistogram('averageEnergy/averageEnergyAroundPointpatTightToL1Muons_SummedEnergy')
@@ -298,27 +290,26 @@ class EvsEtaPhi(Plot):
 		if title == "":
 			title = '# of E_{Max} in HO tiles around L1 direction ' + source
 			
-		canvas = TCanvas('canvasEmaxcounts' + source,'E max counts' + source,900,900)
+		canvas = TCanvas('canvasEmaxcounts' + source,'E max counts' + source,900,800)
 		canvas.cd().SetLogz()
-		
+		canvas.cd().SetRightMargin(.15)
 		hCounter = self.fileHandler.getHistogram('deltaEtaDeltaPhiEnergy/averageEMaxAroundPoint' + source + '_2dCounter')
 		hCounter.GetXaxis().SetRangeUser(-.6,.6)
 		hCounter.GetYaxis().SetRangeUser(-.6,.6)
-		hCounter.SetTitle(title + ';#Delta#eta;#Delta#phi;# Entries')
+		hCounter.SetTitle(';#Delta#eta;#Delta#phi;Entries')#title +
 		hCounter.SetStats(0)
 		hCounter.Draw('colz')
 		canvas.Update()		
 		setupAxes(hCounter)
-		setupPalette(hCounter)
+		setupPalette(hCounter,x2ndc=.87)
 		canvas.Update()
-		label = self.drawLabel()
 		#boxes = drawHoBoxes(canvas)
-		self.storeCanvas(canvas,'eMaxCounts' + source)
+		self.storeCanvas(canvas,'eMaxCounts' + source,marginRight=.15)
 
 		#Output fractions in grid		
 		self.debug('Emax fraction for ' + source)
 		self.outputFractionsInTileGrid(hCounter)
-		return canvas,label,hCounter
+		return canvas,hCounter
 	
 	####################
 	# Predefined plots #
@@ -434,17 +425,16 @@ class EvsEtaPhi(Plot):
 		return hM1Energy,canvas,h0Energy,hP1Energy,h0Counter,label1,label2,label3
 	
 	def plotEtaPhiForTightL1(self):
-		canvas = TCanvas("cEtaPhi","Eta Phi",1200,1200)
-		canvas.Divide(2,1)
+		canvas = TCanvas("cEtaPhi","Eta Phi",1200,900)
 		graphAll = self.fileHandler.getGraph('graphs/patTightToL1Muons')
 		graphWithHo = self.fileHandler.getGraph('graphs/patTightToL1Muons3x3')
 				
 		halfPhiBinwidth = L1_PHI_BIN/2.
 		l1BinOffset = L1_PHI_BIN*3/4.
 		
-		histAll = TH2D('hEtaPhiAll',"#eta#phi for tight L1",30,-15*L1_ETA_BIN	,15*L1_ETA_BIN,
+		histAll = TH2D('hEtaPhiAll',"",30,-15*L1_ETA_BIN	,15*L1_ETA_BIN,
 					144, -math.pi,math.pi)
-		histWithHo = TH2D('hEtaPhiWithHO',"#eta#phi tight L1 + HO (3x3)",30,-15*L1_ETA_BIN,15*L1_ETA_BIN,
+		histWithHo = TH2D('hEtaPhiWithHO',"",30,-15*L1_ETA_BIN,15*L1_ETA_BIN,
 					144, -math.pi,math.pi)
 		
 		x = Double(0)
@@ -458,32 +448,37 @@ class EvsEtaPhi(Plot):
 			graphWithHo.GetPoint(i,x,y)
 			histWithHo.Fill(x,y)
 		
-		canvas.cd(1)
+		canvas.cd().SetRightMargin(.15)
 		histAll.SetStats(0)
 		histAll.GetXaxis().SetRangeUser(-1,1)
 		histAll.SetTitle(histAll.GetTitle() + ';#eta_{L1};#phi_{L1};Entries')
 		histAll.Draw('colz')
 		canvas.Update()
 		setupAxes(histAll)
-		setupPalette(histAll)
-		label1 = self.drawLabel()
+		setupPalette(histAll,x2ndc=.87)
+		#label1 = self.drawLabel(x1ndc=.55,x2ndc=.85)
+		histAll.GetZaxis().SetTitleOffset(1.)
+		histAll.GetZaxis().SetRangeUser(0,1250)
 		canvas.Update()
 		
+		canvas2 = TCanvas("cEtaPhiAndHo","Eta Phi And HO",1200,900)
 		
-		
-		canvas.cd(2)
+		canvas2.cd().SetRightMargin(.15)
 		histWithHo.SetStats(0)
 		histWithHo.GetXaxis().SetRangeUser(-1,1)
 		histWithHo.SetTitle(histWithHo.GetTitle() + ';#eta_{L1};#phi_{L1};Entries')
 		histWithHo.Draw('colz')
-		label2 = self.drawLabel()
+		#label2 = self.drawLabel(x1ndc=.55,x2ndc=.85)
+		histWithHo.GetZaxis().SetRangeUser(0,1250)
 		
-		canvas.Update()
+		canvas2.Update()
 		setupAxes(histWithHo)
-		setupPalette(histWithHo)
+		setupPalette(histWithHo,x2ndc=.87)
+		histWithHo.GetZaxis().SetTitleOffset(1.)
 		
-		canvas.Update()
+		canvas2.Update()
 		
-		self.storeCanvas(canvas, 'etaPhiForTightL1')
-		return canvas,histAll,histWithHo,label1,label2
+		self.storeCanvas(canvas, 'etaPhiForTightL1',marginRight=.15)
+		self.storeCanvas(canvas2, 'etaPhiForTightL1AndHo',marginRight=.15)
+		return canvas,histAll,histWithHo,canvas2
 	

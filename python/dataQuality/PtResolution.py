@@ -276,9 +276,9 @@ class PtResolution(Plot):
 		
 		graphShape68 = TGraph()
 		graphShape68.SetName(dataSet)
-		graphShape68.SetFillStyle(3001)
-		graphShape68.SetFillColor(colorRwthGruen)
-		graphShape68.SetLineColor(colorRwthGruen)
+		graphShape68.SetFillStyle(1001)
+		graphShape68.SetFillColorAlpha(colorRwthGruen,.75)
+		graphShape68.SetLineColorAlpha(colorRwthGruen,.75)
 
 		for i in zip(self.cached_data['x']['values'],self.cached_data[dataSet]['q16']):
 			graphShape68.SetPoint(graphShape68.GetN(),i[0],i[1])
@@ -287,7 +287,7 @@ class PtResolution(Plot):
 			graphShape68.SetPoint(graphShape68.GetN(),i[0],i[1])
 		
 		graphShape68.GetYaxis().SetRangeUser(0,200)
-		graphShape68.SetTitle("Mean, Median, and Quantiles of " + dataSet + " p_{T};p_{T,Reco} / GeV;p_{T,L1} / GeV")
+		graphShape68.SetTitle(";p_{T,Reco} / GeV;p_{T,L1} / GeV")#"Mean, Median, and Quantiles of " + dataSet + " p_{T};p_{T,Reco} / GeV;p_{T,L1} / GeV")
 		setupAxes(graphShape68)
 
 		graphShape68.Draw('a f')
@@ -296,18 +296,16 @@ class PtResolution(Plot):
 		graphQ50.Draw('same,l')
 
 		
-		legend = getLegend(y2 = .9)
+		legend = getLegend(y1=.75,y2 = .95,x1=.1,x2=.5)
 		legend.AddEntry(graphMean,dataSet + ' p_{T} Mean','ep')
 		legend.AddEntry(graphMedian,dataSet + ' p_{T} Median','l')
 		legend.AddEntry(graphShape68,dataSet + ' p_{T} Q_{25} - Q_{75}','f')
 		legend.AddEntry(graphQ50,dataSet + ' p_{T} Q_{50}','l')
 		legend.Draw()
-		
-		label = self.drawLabel()
-		
+				
 		c.Update()
-		self.storeCanvas(c,'quantiles_' + self.truthTag + '_' + dataSet.replace(' ','_').replace('!','Not'))
-		return c,graphMean,legend,label,graphMedian,graphShape68,graphQ50
+		self.storeCanvas(c,'quantiles_' + self.truthTag + '_' + dataSet.replace(' ','_').replace('!','Not'), marginRight = .02)
+		return c,graphMean,legend,graphMedian,graphShape68,graphQ50
 
 	def plotTightPtResolution(self):
 		c = TCanvas('cTightResolution','cTightResolution')

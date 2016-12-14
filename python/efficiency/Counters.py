@@ -2,7 +2,7 @@ from plotting.Plot import Plot
 
 from ROOT import TCanvas,TH1D,TH2D,TText
 from plotting.PlotStyle import colorRwthDarkBlue, colorRwthMagenta,\
-	colorRwthTuerkis, setupAxes, setupPalette, colorRwthOrange
+	colorRwthTuerkis, setupAxes, setupPalette, colorRwthOrange, colorRwthRot
 from plotting.Utils import getLegend, L1_ETA_BIN, L1_PHI_BIN, fillGraphIn2DHist,calcPercent,getXinNDC,calcSigma
 
 import math
@@ -59,14 +59,13 @@ class Counters(Plot):
 		binContentsInverted = [nL1,nL1Reco,nL1RecoTight,nL1RecoTightHo]
 		binLabelsInverted = ['L1','L1 -> Reco','L1 + R -> tight','L1 + R + tight -> HO']
 
-		c = TCanvas('cL1AndTightL1Count','L1AndTightL1Count')
-		
-		h = TH1D('hL1AndTightL1Count','L1 Cutflow',4,-0.5,N_BINS - .5)
-		hInverted = TH1D('hL1AndTightL1CountInverted','L1 Efficiency',4,-0.5,N_BINS - .5)
-		hInverted.SetFillStyle(3002)
-		hInverted.SetFillColor(colorRwthOrange)
-		hInverted.SetLineColor(colorRwthOrange)
-		hInverted.SetLineStyle(3)
+		c = TCanvas('cL1AndTightL1Count','L1AndTightL1Count',1200,900)
+				
+		h = TH1D('hL1AndTightL1Count','',4,-0.5,N_BINS - .5)
+		hInverted = TH1D('hL1AndTightL1CountInverted','',4,-0.5,N_BINS - .5)
+		hInverted.SetFillStyle(1001)
+		hInverted.SetFillColorAlpha(colorRwthOrange,.5)
+		hInverted.SetLineColorAlpha(colorRwthOrange,.5)
 		
 		hL13x3Alone = TH1D('hL1And3x3Alone','',1,1.5,2.5)
 		hL13x3Alone.SetBinContent(1,nL1RecoHo/nL1Reco)
@@ -82,48 +81,53 @@ class Counters(Plot):
 			h.SetBinContent(i,binContents[i-1]/binContents[1])
 			h.GetXaxis().SetBinLabel(i,binLabels[i-1])
 			hInverted.SetBinContent(i,binContentsInverted[i-1]/binContentsInverted[1])
-			hInverted.GetXaxis().SetBinLabel(i,binLabelsInverted[i-1])
+			#Very dirty hack to change the order of plotting but have the correct labels !!!
+			hInverted.GetXaxis().SetBinLabel(i,binLabels[i-1])#binLabelsInverted[i-1])
 			
 		h.GetXaxis().SetBinLabel(1,'L1')
 		h.SetBinContent(1,1)
+		hInverted.SetLabelSize(0.05)
 		hInverted.GetXaxis().SetBinLabel(1,'L1')
 		hInverted.SetBinContent(1,1)
 		
 		h.SetLineColor(colorRwthDarkBlue)
-		h.SetStats(0)
-		h.GetYaxis().SetTitle('rel. fraction')
-		h.Draw()
+		hInverted.SetStats(0)
+		hInverted.GetYaxis().SetTitle('rel. fraction')
+		
 #		hL13x3Alone.Draw('same e')
 #		hTightL13x3Alone.Draw('same e')
-		hInverted.Draw('same')
+		hInverted.Draw('')
 		hInverted.GetXaxis().Draw('same')
+		h.Draw('same')
 		
-		setupAxes(h)
+		setupAxes(hInverted)
 		
-		legend = getLegend(y2=.9,x1=.55)
+		legend = getLegend(y1=.85,y2=.95,x1=.64,x2=.98)
 		legend.AddEntry(h,'First match HO then use tight','l')
 #		legend.AddEntry(hL13x3Alone,'3x3 matching normed to # L1 + R','le')
 #		legend.AddEntry(hTightL13x3Alone,'Normed to # L1 + R + HO','l')
 		legend.AddEntry(hInverted,'Inverted order for HO and tight','f')
 		legend.Draw()
 		
-		label = self.drawLabel()
+		#label = self.drawLabel(x1ndc=.69,x2ndc=.99)
 		
 		textObjects = []
-
+		
+		#Manually determined
+		xNdcCoordinates = [0.42,0.64,0.86]
 		#for (Int_t i=1;i<=30;i++) t.DrawText(h->GetBinCenter(i),yt,Form("%d",i%10));
 		for i in range(1,4):
 			t = TText()
-			t.SetTextSize(0.025)
+			t.SetTextSize(0.035)
 			t.SetTextAlign(22)
 			t.SetTextColor(colorRwthOrange)
-			t.DrawTextNDC(getXinNDC(hInverted.GetBinCenter(i+1)),0.05,binLabelsInverted[i])
+			t.DrawTextNDC(xNdcCoordinates[i-1],0.035,binLabelsInverted[i])
 #			Double_t yt = - h->GetMaximum()/15.;
 			textObjects.append(t)
 		c.Update()
-		self.storeCanvas(c, 'l1AndTightL1Counters')
+		self.storeCanvas(c, 'l1AndTightL1Counters',marginRight=.02)
 		
-		return h,c,hL13x3Alone,hTightL13x3Alone,label,legend,hInverted,textObjects
+		return h,c,hL13x3Alone,hTightL13x3Alone,legend,hInverted,textObjects
 	
 	def plotTightL1EtaPhiRatio(self):
 		gL1Tight = self.fileHandler.getGraph('graphs/patTightToL1Muons')
@@ -147,16 +151,18 @@ class Counters(Plot):
 		hRatio = hL1Tight3x3.Clone('asdfasdf')
 		hRatio.Divide(hL1Tight)
 		
-		c = TCanvas('2dMap')
-		hRatio.SetTitle('Local Efficiency per tight L1 coordinate (3x3 Matching);#eta_{L1};#phi_{L1};#epsilon')
+		c = TCanvas('2dMap',"",1200,900)
+		#Local Efficiency per tight L1 coordinate (3x3 Matching)
+		hRatio.SetTitle(';#eta_{L1};#phi_{L1} / rad;#epsilon')
 		hRatio.GetXaxis().SetRangeUser(-0.8,.8)
 		hRatio.Draw('colz')
 		hRatio.SetStats(0)
 		c.Update()
 		setupAxes(hRatio)
 		setupPalette(hRatio)
-		label = self.drawLabel()
 		c.Update()
+		hRatio.GetYaxis().SetTitleOffset(.7)
+		hRatio.GetZaxis().SetTitleOffset(.5)
 		self.storeCanvas(c, 'localTightL1Efficiency')
 
 		c2 = TCanvas('projections')
@@ -171,5 +177,5 @@ class Counters(Plot):
 		hPhi.Scale(1/float(16))#16 eta bins, cutoff due to |eta| < 0.8
 		hPhi.Draw()
 		
-		return c,hRatio,label,c2,hEta,hPhi,c1,hClone
+		return c,hRatio,c2,hEta,hPhi,c1,hClone
 	

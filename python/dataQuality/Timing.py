@@ -109,6 +109,10 @@ class Timing(Plot):
 		c2 = TCanvas("cBxId" + TIGHT_TOKEN,"BX ID" + TIGHT_TOKEN,1200,400)
 		c2.Divide(3,1)
 
+		c2.cd(1).SetLeftMargin(.12)
+		c2.cd(2).SetLeftMargin(.12)
+		c2.cd(3).SetLeftMargin(.12)
+
 		hBxIdBest = self.fileHandler.getHistogram('timingSupport%s_MatchedDtRpcHo_BxId' % TIGHT_TOKEN)
 		hBxIdDtOnly = self.fileHandler.getHistogram('timingSupport%s_UnmatchedDtHo_BxId' % TIGHT_TOKEN)
 		hBxIdOther = self.fileHandler.getHistogram('timingSupport%s_OtherCodesHo_BxId' % TIGHT_TOKEN)
@@ -164,7 +168,6 @@ class Timing(Plot):
 		setupAxes(hBxIdBest)
 		setBigAxisTitles(hBxIdBest)
 		hBxIdBest.Draw()
-		label = self.drawLabel()
 		
 		### Plot unmatched DT
 		c2.cd(2).SetLogy()
@@ -194,15 +197,23 @@ class Timing(Plot):
 		setBigAxisTitles(hBxIdOther)
 		hBxIdOther.Draw()
 		
-		self.storeCanvas(c2,"bxId" + TIGHT_TOKEN)
+		hBxIdBest.GetYaxis().SetTitleOffset(1)
+		hBxIdDtOnly.GetYaxis().SetTitleOffset(1)
+		hBxIdOther.GetYaxis().SetTitleOffset(1)
+		
+		self.storeCanvas(c2,"bxId" + TIGHT_TOKEN, drawLabel = False)
 
-		return label,c2,hBxIdBest,hBxIdDtOnly,hBxIdOther
+		return c2,hBxIdBest,hBxIdDtOnly,hBxIdOther
 
 
 	def plotMatchedHoTime(self):
 		c2 = TCanvas("cTimeforMatchedHoHits","Matched Ho time",1200,400)
 		c2.Divide(3,1)
-		
+
+		c2.cd(1).SetLeftMargin(.12)
+		c2.cd(2).SetLeftMargin(.12)
+		c2.cd(3).SetLeftMargin(.12)
+
 		### Plot matched DT/RPC
 		c2.cd(1).SetLogy()
 		hBxIdBest = self.fileHandler.getHistogram('timingSupport_MatchedDtRpcHo_Time')
@@ -233,7 +244,6 @@ class Timing(Plot):
 		setupAxes(hBxIdBest)
 		setBigAxisTitles(hBxIdBest)
 		hBxIdBest.Draw()
-		label = self.drawLabel()
 		
 		### Plot unmatched DT
 		c2.cd(2).SetLogy()
@@ -263,6 +273,10 @@ class Timing(Plot):
 		setBigAxisTitles(hBxIdOther)
 		hBxIdOther.Draw()
 		
+		hBxIdBest.GetYaxis().SetTitleOffset(1)
+		hBxIdDtOnly.GetYaxis().SetTitleOffset(1)
+		hBxIdOther.GetYaxis().SetTitleOffset(1)
+
 		self.storeCanvas(c2,"matchedHoTime")
 		
 		c = TCanvas('cDtOnlyWithTight',"DT only with tight",600,600)
@@ -286,7 +300,7 @@ class Timing(Plot):
 		
 		self.storeCanvas(c, 'matchedHoDtOnlyWithTight')
 				
-		return label,c2,hBxIdBest,hBxIdDtOnly,hBxIdOther,hBxIdDtOnlyTight,hBxIdDtOnlyCopy,c,legend
+		return c2,hBxIdBest,hBxIdDtOnly,hBxIdOther,hBxIdDtOnlyTight,hBxIdDtOnlyCopy,c,legend
 	
 	def plotHoTimeLog(self):
 		c3 = TCanvas("c3Log","HO Time Log",1200,1200)
@@ -716,8 +730,10 @@ class Timing(Plot):
 	
 	def plotImprovementInDt(self):
 		#Prepare canvas
-		canvas = TCanvas("canvasDtImprovement","DT improvement",1200,1200)
+		canvas = TCanvas("canvasDtImprovement","DT improvement",900,900)
 		canvas.SetLogy()
+		canvas.cd().SetLeftMargin(.12)
+		
 		histDt = self.fileHandler.getHistogram("timingSupport_UnmatchedDtHo_BxId")
 		histDtNoHo = self.fileHandler.getHistogram("timingSupport_UnmatchedDt_BxId")
 		
@@ -789,7 +805,7 @@ class Timing(Plot):
 		print 'BX +1:\t',int(correctedBxIdP1)
 		print 
 		#Fill corrected histogram
-		histNew = TH1D("histNew","BX ID in DT only triggers;BX ID;rel. fraction",6,-2.5,3.5)
+		histNew = TH1D("histNew",";BX ID;rel. fraction",6,-2.5,3.5)
 		histNew.SetBinContent(histNew.FindBin(-1),correctedBxIdM1)
 		histNew.SetBinContent(histNew.FindBin(0),correctedBxId0)
 		histNew.SetBinContent(histNew.FindBin(1),correctedBxIdP1)
@@ -811,26 +827,25 @@ class Timing(Plot):
 		histDtNoHo.Scale(1/histDtNoHo.Integral())
 		histDtNoHo.SetLineWidth(3)
 		#histDtNoHo.Draw('same')
-	
-		#Add label
-		label = self.drawLabel()
-		
+			
 		#Add legend
-		legend = TLegend(0.7,0.65,0.9,0.8)
+		legend = TLegend(0.7,0.65,0.98,0.8)
 		legend.AddEntry(histDt,"DT Only + HO","l")
 		legend.AddEntry(histNew,"DT shifted with HO","l")
 		legend.SetBorderSize(1)
 		legend.Draw()
 		
 		#Add text object
-		pText = TPaveText(0.52,0.8,0.9,0.9,'NDC')
-		pText.AddText('Fraction in BX ID 0: %5.2f%% #pm %5.2f%%' % (dtBx0/float(dtBxTotal)*100,calcSigma(dtBx0, dtBxTotal)*100))
-		pText.AddText('Fraction in BX ID 0 (HO corr.): %5.2f%% #pm %5.2f%%' % (correctedRightFraction*100,calcSigma(correctedBxId0, correctedTotal)*100))
+		pText = TPaveText(0.575,0.8,0.98,0.95,'NDC')
+		pText.AddText('Fraction in BX ID 0:')
+		pText.AddText('%5.2f%% #pm %5.2f%%' % (dtBx0/float(dtBxTotal)*100,calcSigma(dtBx0, dtBxTotal)*100))
+		pText.AddText('Fraction in BX ID 0 (HO corr.):')
+		pText.AddText('%5.2f%% #pm %5.2f%%' % (correctedRightFraction*100,calcSigma(correctedBxId0, correctedTotal)*100))
 		pText.SetBorderSize(1)
 		pText.SetFillColor(0)
 		pText.Draw()
 		
-		pText2 = TPaveText(0.7,0.6,0.9,0.65,'NDC')
+		pText2 = TPaveText(0.7,0.6,0.98,0.65,'NDC')
 		pText2.AddText('Entries: %d' % (histDt.GetEntries()))
 		pText2.SetBorderSize(1)
 		pText2.SetFillColor(0)
@@ -845,9 +860,11 @@ class Timing(Plot):
 		print 80*'#'
 		print CliColors.ENDC
 
+		histNew.GetYaxis().SetTitleOffset(1.)
+		
 		canvas.Update()
-		self.storeCanvas(canvas, 'correctedDt')
-		return canvas, histDt,histNew,label,legend,pText2,pText,histDtNoHo
+		self.storeCanvas(canvas, 'correctedDt',marginRight=.02,marginLeft=.13)
+		return canvas, histDt,histNew,legend,pText2,pText,histDtNoHo
 	
 	def plotImprovementInTightDt(self):
 		#Prepare canvas
