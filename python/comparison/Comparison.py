@@ -369,39 +369,37 @@ class Comparison(Plot):
 		
 		c = TCanvas('cNvsPt','Nvs pt')
 		c.cd().SetLeftMargin(0.17)
+		c.cd().SetBottomMargin(0.15)
 		
 		hSim.SetMarkerStyle(20)
 		hSim.SetMarkerColor(colorRwthLila)
 		hSim.SetLineColor(colorRwthLila)
 		hSim.GetYaxis().SetRangeUser(0,0.03)
 		
-		
 		hSimPu.SetMarkerStyle(21)
 		hSimPu.SetMarkerColor(colorRwthOrange)
 		hSimPu.SetLineColor(colorRwthOrange)
-		hSimPu.SetTitle('Normalized distribution of p_{T};p_{T,L1};normalized fraction / binwidth')
+		hSimPu.SetTitle(';p_{T,L1} / GeV;Normalized fraction / #frac{1}{GeV}')#'Normalized distribution of p_{T};p_{T,L1};normalized fraction / binwidth')
 		hSimPu.SetStats(0)
 		hSimPu.GetXaxis().SetRangeUser(0,20)
-		hSimPu.GetYaxis().SetTitle("Normalized fraction / #frac{1}{GeV}")
 		hSimPu.Draw('lp')
 		hSim.Draw('same,lp')		
 		setupAxes(hSimPu)
 
 		hSimPu.GetYaxis().SetTitleOffset(1.35)
+		hSimPu.GetXaxis().SetTitleOffset(1.)
 
 		hData.SetMarkerStyle(22)
 		hData.SetMarkerColor(colorRwthTuerkis)
 #		hData.Draw('same,p')
 		
-		legend = getLegend(y1 = 0.65,y2=.9)
+		legend = getLegend(x1 = 0.65,y1 = 0.65,y2=.95,x2=.98)
 		legend.AddEntry(hSim,'Sim','lp')
 		legend.AddEntry(hSimPu,'Sim, PU52','lp')
 #		legend.AddEntry(hData,'Data','ep')
 		legend.Draw()
-		
-		label = self.drawLabel()
-		
+				
 		c.Update()
-		self.storeCanvas(c, 'l1CountComparison/l1CountNormalized',
-						markPosition={'x1ndc' : 0.16, 'y1ndc' : 0.898, 'x2ndc' : 0.319, 'y2ndc' : 0.940})
-		return hSim,c,hSimPu,hData,legend,label
+		self.storeCanvas(c, 'l1CountComparison/l1CountNormalized',marginRight=.02,marginLeft=.17)
+						#markPosition={'x1ndc' : 0.16, 'y1ndc' : 0.898, 'x2ndc' : 0.319, 'y2ndc' : 0.940})
+		return hSim,c,hSimPu,hData,legend
