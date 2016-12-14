@@ -176,28 +176,36 @@ def setBigAxisTitles(plot):
 	plot.GetXaxis().SetTitleOffset(0.7)
 	plot.GetYaxis().SetTitleSize(0.06)
 	plot.GetYaxis().SetTitleOffset(0.8)
-		
+	plot.GetZaxis().SetTitleSize(0.06)
+	plot.GetZaxis().SetTitleOffset(0.6)
+	
 #Set the stat box display Options
 def setStatBoxOptions(plot,option):
 	stats = plot.GetListOfFunctions().FindObject("stats")
 	stats.SetOptStat(option)
 
 #Set the stat box position
-def setStatBoxPosition(plot,x1 = 0.7, x2 = 0.9, y1 = 0.75, y2 = 0.9):
+def setStatBoxPosition(plot,x1 = 0.7, x2 = 0.9, y1 = 0.8, y2 = 0.95):
 	stats = plot.GetListOfFunctions().FindObject("stats")
 	stats.SetX1NDC(x1)
 	stats.SetX2NDC(x2)
 	stats.SetY1NDC(y1)
 	stats.SetY2NDC(y2)
 
-def setupPalette(plot):
+'''
+The x2ndc is for now kept for downwards compatibility
+'''
+def setupPalette(plot,x2ndc=.92,shiftBy=0.0):
 	#Set as many color palette divisions as possible
 	plot.SetContour(99)
 	#make the palette as small as possible
 	pal = plot.GetListOfFunctions().FindObject("palette")
 	if not pal:
 		return
-	pal.SetX2NDC(0.92)
+	pal.SetX2NDC(x2ndc - shiftBy)
+	pal.SetX1NDC(0.905 - shiftBy)
+	pal.SetY2NDC(.95)
+	plot.GetZaxis().SetTitleOffset(1.)
 
 #Function that returns a new TH2D with the axes already set up
 def getTH2D(name,title,nBinsX,xLow,xHigh,nBinsY,yLow,yHigh):
