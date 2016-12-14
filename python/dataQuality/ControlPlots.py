@@ -89,17 +89,17 @@ class ControlPlots(Plot):
 		c, hist = self.plotL1EtaVsPatEtaFineTight()
 		graph = self.fileHandler.getGraph('graphs/l1EtaVsPatEtaNotFineTight')
 		fillGraphIn2DHist(graph, hist)
-		hist.SetTitle('tight L1Muon #eta vs. pat #eta')
+		hist.SetTitle('')#tight L1Muon #eta vs. pat #eta')
 		c.Update()		
 		setupAxes(hist)
-		setupPalette(hist)
+		setupPalette(hist,shiftBy=.05)
 		hist.SetStats(0)
 		hist.GetXaxis().SetRangeUser(-.8,.8)
 		hist.GetYaxis().SetRangeUser(-.8,.8)
-		label = self.drawLabel()
+		hist.GetZaxis().SetTitle('Entries')
 		c.Update()
-		self.storeCanvas(c,'l1EtaVsPatEtaTight')
-		return c,hist,label
+		self.storeCanvas(c,'l1EtaVsPatEtaTight',marginRight=.15)
+		return c,hist
 
 	def plotL1EtaVsPatEtaFine(self):
 		return self.makeL1EtaVsPatEtaPlot('l1EtaVsPatEtaFine')
@@ -171,19 +171,20 @@ class ControlPlots(Plot):
 	Plot the eta phi distribution of HO > Thr
 	'''
 	def plotHoIEtaIPhi(self):
-		canvas = TCanvas('cHoIEtaIPhi','HO iEta iPhi',0,50,600,500)
+		canvas = TCanvas('cHoIEtaIPhi','HO iEta iPhi',0,300,600,500)
 		canvas.SetLogz()
+		canvas.cd().SetRightMargin(.15)
 		hoEtaPhi = self.fileHandler.getHistogram('etaPhi/hoRecHitsAboveThr_iEtaIPhi')
-		hoEtaPhi.SetTitle('HO RecHits > 0.2GeV;i#eta;i#phi;# entries')
+		hoEtaPhi.SetTitle(';i#eta;i#phi;Entries')#'HO RecHits > 0.2GeV;i#eta;i#phi;# entries')
 		hoEtaPhi.Draw('colz')
 		canvas.Update()
 		hoEtaPhi.SetStats(0)
 		setupAxes(hoEtaPhi)
-		setupPalette(hoEtaPhi)
-		label = self.drawLabel()
+		#hoEtaPhi.GetZaxis().SetTitleOffset(.9)
+		setupPalette(hoEtaPhi,x2ndc=.87)
 		canvas.Update()
-		self.storeCanvas(canvas,"hoEtaPhi")
-		return label,canvas,hoEtaPhi
+		self.storeCanvas(canvas,"hoEtaPhi",marginRight=.15)
+		return canvas,hoEtaPhi
 
 	
 	'''
