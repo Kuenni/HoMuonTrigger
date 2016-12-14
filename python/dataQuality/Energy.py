@@ -1,6 +1,6 @@
 from plotting.Plot import Plot
 
-from ROOT import TCanvas,TFile
+from ROOT import TCanvas,TFile,TPad
 from plotting.Utils import getLegend
 from plotting.PlotStyle import colorRwthDarkBlue, colorRwthTuerkis, colorRwthRot,\
 	colorRwthGruen, setupAxes, colorRwthLightBlue, colorRwthMagenta, colorRwthLila
@@ -164,14 +164,14 @@ class Energy(Plot):
 		L1MuonAndHoMatchAboveThr = None
 		L1MuonAndHoMatchAboveThrFilt = None
 		
-		canv = TCanvas("energieNormCanvas",'Energy Norm canvas',1200,1200)
+		canv = TCanvas("energieNormCanvas",'Energy Norm canvas',800,800)
 		canv.SetLogy()
 	
 		ho.SetStats(0)
-		ho.SetTitle('Normalized energy distribution of HO hits')
+		ho.SetTitle('')#Normalized energy distribution of HO hits')
 		ho.GetXaxis().SetTitle('Reconstructed HO energy / GeV')
 		ho.GetYaxis().SetTitle('rel. fraction')
-		ho.GetXaxis().SetRangeUser(-0.2,6)
+		ho.GetXaxis().SetRangeUser(-0.2,2)
 	
 		ho.SetLineColor(colorRwthDarkBlue)
 		ho.SetLineWidth(3)
@@ -184,10 +184,8 @@ class Energy(Plot):
 		setupAxes(ho)		
 		ho.Draw()
 		hoNoise.Draw('same')
-		
-		label = self.drawLabel()
-		
-		legend = getLegend(0.5,0.65,0.9,0.9)
+				
+		legend = getLegend(0.4,0.8,0.98,0.95)
 		legend.AddEntry(ho,'All HO hits','l')
 		legend.AddEntry(hoNoise,'HO hits, no #mu expected','l')
 		legend.Draw()
@@ -217,9 +215,12 @@ class Energy(Plot):
 		setupAxes(ho)
 		canv.Update()
 		
-		self.storeCanvas(canv,'energyNorm')
+		ho.GetYaxis().SetTitleOffset(1.)
+		canv.Update()
+		
+		self.storeCanvas(canv,'energyNorm',marginRight=.02,marginLeft=.15)
 
-		return [canv,ho,L1MuonAndHoMatch, L1MuonAndHoMatchAboveThr,L1MuonAndHoMatchAboveThrFilt,hoNoise,label,legend]
+		return [canv,ho,L1MuonAndHoMatch, L1MuonAndHoMatchAboveThr,L1MuonAndHoMatchAboveThrFilt,hoNoise,legend]
 	
 	def plotEnergy(self):
 
