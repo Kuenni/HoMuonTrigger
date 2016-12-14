@@ -56,28 +56,44 @@ class Plot:
 		return
 	
 	#Save a canvas as gif file with the source data file name attached
-	def storeCanvas(self,canvas,plotname,drawMark = True,
-				markPosition = {'x1ndc' : 0.093, 'y1ndc' : 0.898, 'x2ndc' : 0.319, 'y2ndc' : 0.940}):
+	def storeCanvas(self,canvas,plotname,drawMark = True, drawLabel = True, markPosition = None, labelPosition = None, marginRight=None, marginLeft=0.1):
+		# Do the following to overcome the late binding in python which evaluates
+		# the default objects only once and persists the information
+		if markPosition == None:
+			markPosition = {'x1ndc' : marginLeft - 0.007, 'y1ndc' : 0.95, 'x2ndc' : marginLeft + 0.226, 'y2ndc' : 0.99}
+			
+		#is this way also needed for "elementary data types"?
+		if marginRight == None:
+			marginRight = 0.1
+			
+		if labelPosition == None:
+			labelPosition = {'x1ndc' : .7 - marginRight, 'y1ndc' : 0.95, 'x2ndc' : 1 - marginRight, 'y2ndc' : 0.98}
+		
 		if(plotname.find('/') != -1):
 			if( not os.path.exists(self.plotSubdir + '/' + plotname[0:plotname.rfind('/')])):
 				os.makedirs(self.plotSubdir + '/' + plotname[0:plotname.rfind('/')])
 				
-		canvas.cd()
+		canvas.cd().SetTopMargin(.05)
+		canvas.cd().SetRightMargin(marginRight)
+		canvas.cd().SetLeftMargin(marginLeft)
 
 		if drawMark:
 			mark = drawWaterMark(markPosition = markPosition)
+		if drawLabel:		
+			label = self.drawLabel(labelPosition = labelPosition)
 		
 		canvas.Update()
 		canvas.SaveAs('%s/%s_%s.gif'%(self.plotSubdir,plotname,self.fileHandler.filename))
 		canvas.SaveAs('%s/%s_%s.png'%(self.plotSubdir,plotname,self.fileHandler.filename))
+		canvas.SaveAs('%s/%s_%s.pdf'%(self.plotSubdir,plotname,self.fileHandler.filename))
+				
 		return
 	
-	def drawLabel(self,x1ndc = 0.6, y1ndc = 0.90, x2ndc = 0.9, y2ndc = 0.93):
-		label = None
+	def drawLabel(self,labelPosition = {'x1ndc' : 0.6, 'y1ndc' : 0.95, 'x2ndc' : 0.9, 'y2ndc' : 0.98}):
 		if self.data:
-			label = drawLabelCmsPrivateData(x1ndc,y1ndc,x2ndc,y2ndc)
+			label = drawLabelCmsPrivateData(labelPosition['x1ndc'],labelPosition['y1ndc'],labelPosition['x2ndc'],labelPosition['y2ndc'])
 		else:
-			label = drawLabelCmsPrivateSimulation(x1ndc,y1ndc,x2ndc,y2ndc)
+			label = drawLabelCmsPrivateSimulation(labelPosition['x1ndc'],labelPosition['y1ndc'],labelPosition['x2ndc'],labelPosition['y2ndc'])
 		return label
 	
 	def debug(self,string):
