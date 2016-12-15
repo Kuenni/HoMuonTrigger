@@ -313,7 +313,7 @@ class Timing(Plot):
 			hHoTime = self.fileHandler.getHistogram('hoRecHits_Time')
 			
 			hHoTime.SetStats(0)
-			hHoTime.SetTitle("Time distribution for all HO Rec Hits")
+			hHoTime.SetTitle()
 			hHoTime.SetLineColor(colorRwthDarkBlue)
 			hHoTime.SetLineWidth(3)
 			hHoTime.Draw()
@@ -323,26 +323,30 @@ class Timing(Plot):
 		hHoTimeAboveThr = self.fileHandler.getHistogram('hoRecHitsAboveThr_Time')
 		c3.cd(2).SetLogy()
 		hHoTimeAboveThr.SetStats(0)
-		hHoTimeAboveThr.SetTitle("Time distribution for HO Rec Hits > 0.2 GeV")
+		hHoTimeAboveThr.SetTitle('')
 		hHoTimeAboveThr.SetLineColor(colorRwthDarkBlue)
 		hHoTimeAboveThr.SetLineWidth(3)
+		hHoTimeAboveThr.GetXaxis().SetRangeUser(-50,50)
 		setupAxes(hHoTimeAboveThr)
 		hHoTimeAboveThr.Draw()
-		
-		label = getLabelCmsPrivateSimulation()
-		label.Draw()
 	
 		fit = TF1("fit","gaus",-10,10)
 		fit.SetParameter(1,0)
 		fit.SetParameter(2,1)
-		hHoTimeAboveThr.Fit(fit,'','R',-12.5,12.5)
+		fit.SetLineWidth(3)
+		hHoTimeAboveThr.Fit(fit,'','R',-12.5,7)
 		
 		self.debug(80*'#')
 		self.debug('Chi^2: %5.2f' % fit.GetChisquare())
 		self.debug('NDF: %d' % fit.GetNDF())
 		self.debug(80*'#')
 		
-		pText = TPaveText(0.7,0.8,0.9,0.9,'NDC')
+		legend = getLegend(x1=.1, y1=.85, x2=.415, y2=.95)
+		legend.AddEntry(hHoTimeAboveThr,'HO (E_{Rec} > 0.2 GeV)','l')
+		legend.AddEntry(fit,'Fit','l')
+		legend.Draw()
+		
+		pText = TPaveText(0.78,0.85,0.97,0.95,'NDC')
 		pText.AddText('Mean: %.2f ns' % (fit.GetParameter(1)))
 		pText.AddText('#sigma: %.2f ns' % (fit.GetParameter(2)))
 		pText.SetBorderSize(1)
@@ -350,9 +354,9 @@ class Timing(Plot):
 		pText.Draw()
 		
 		c3.Update()
-		self.storeCanvas(c3,"hoTimeLog")
+		self.storeCanvas(c3,"hoTimeLog",marginRight=.03)
 		
-		return c3,pText,hHoTimeAboveThr
+		return c3,pText,hHoTimeAboveThr,legend
 	
 	def plotHoTime(self):
 		c3 = TCanvas("c3","HO Time",1200,1200)
