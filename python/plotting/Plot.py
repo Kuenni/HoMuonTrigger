@@ -56,15 +56,12 @@ class Plot:
 		return
 	
 	#Save a canvas as gif file with the source data file name attached
-	def storeCanvas(self,canvas,plotname,drawMark = True, drawLabel = True, markPosition = None, labelPosition = None, marginRight=None, marginLeft=0.1):
+	def storeCanvas(self,canvas,plotname,drawMark = True, drawLabel = True, markPosition = None, labelPosition = None,
+				marginRight=0.1, marginLeft=0.1,marginTop=.05):
 		# Do the following to overcome the late binding in python which evaluates
 		# the default objects only once and persists the information
 		if markPosition == None:
 			markPosition = {'x1ndc' : marginLeft - 0.007, 'y1ndc' : 0.95, 'x2ndc' : marginLeft + 0.226, 'y2ndc' : 0.99}
-			
-		#is this way also needed for "elementary data types"?
-		if marginRight == None:
-			marginRight = 0.1
 			
 		if labelPosition == None:
 			labelPosition = {'x1ndc' : .7 - marginRight, 'y1ndc' : 0.95, 'x2ndc' : 1 - marginRight, 'y2ndc' : 0.98}
@@ -73,7 +70,7 @@ class Plot:
 			if( not os.path.exists(self.plotSubdir + '/' + plotname[0:plotname.rfind('/')])):
 				os.makedirs(self.plotSubdir + '/' + plotname[0:plotname.rfind('/')])
 				
-		canvas.cd().SetTopMargin(.05)
+		canvas.cd().SetTopMargin(marginTop)
 		canvas.cd().SetRightMargin(marginRight)
 		canvas.cd().SetLeftMargin(marginLeft)
 
