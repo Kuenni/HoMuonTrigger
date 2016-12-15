@@ -8,7 +8,7 @@ from plotting.Utils import getMedian, calcPercent, fillGraphIn2DHist, calcSigma,
 	getLegend, fill2DGraphIn2DHist
 from ROOT import Double, TH1D, TCanvas, TEfficiency, TF1, TH2D, TBox, TGaxis,gPad,gStyle,TPaveText
 from plotting.PlotStyle import setupAxes, colorRwthMagenta, colorRwthRot,\
-	colorRwthDarkBlue, colorRwthDarkGray
+	colorRwthDarkBlue, colorRwthDarkGray, setupPalette
 from math import fabs, sqrt
 import numpy as np
 
@@ -78,31 +78,34 @@ class HoTimeVsEta(Plot):
 
 	
 	def plotFractionsVsEta(self,graph,title,saveName):
-		c2 = TCanvas(saveName + '_EtaFractions')
-		graph.SetTitle(title + ';i#eta;rel. Fraction in [-12.5,12.5]ns')
+		c2 = TCanvas(saveName + '_EtaFractions',"saveName",0,600,800,600)
+		c2.cd().SetLeftMargin(.15)
+		graph.SetTitle(';i#eta;rel. Fraction in [-12.5,12.5]ns')
 		graph.Draw('ap')
 		c2.Update()
 		setupAxes(graph)
-		label = self.drawLabel()
-		self.storeCanvas(c2,saveName)
-		return c2,graph,label
+		self.storeCanvas(c2,saveName,marginLeft=.15,marginRight=.02)
+		return c2,graph
 		
 	### ========================
 	### Plots of HO time vs iEta
 	### ========================
 	def makeTimeVsEtaPlot(self,source,title = ""):
 		canvas = TCanvas(source)
+		canvas.SetRightMargin(.15)
 		if title == "":
 			title = source
-		hist = TH2D(source,title + ";i#eta;Time / ns;#",33,-16.5,16.5,
+		hist = TH2D(source,";i#eta;Time / ns;Entries",33,-16.5,16.5,
 				201,-100.5,100.5)
 		graph = self.fileHandler.getGraph('graphs/timingSupport_' + source)
 		fillGraphIn2DHist(graph, hist)
 		hist.SetStats(0)
+		hist.GetXaxis().SetRangeUser(-11,11)
+		hist.GetYaxis().SetRangeUser(-60,60)
 		hist.Draw('colz')
 		canvas.Update()
 		setupAxes(hist)
-		label = self.drawLabel()
+		setupPalette(hist,shiftBy=.05)
 		canvas.Update()
 		fractionGraph,counterDict = self.printFractionsPerIEta(graph)
 		self.debug('Integral of plot %20s: %d' % (source,hist.Integral()))
@@ -127,7 +130,7 @@ class HoTimeVsEta(Plot):
 			box.Draw()
 			intervalBoxes.append(box)
 
-		return canvas,hist,label,fractionGraph,intervalBoxes,tofFunction
+		return canvas,hist,fractionGraph,intervalBoxes,tofFunction
 	
 	### ========================
 	### Plots of HO time vs iPhi
@@ -143,14 +146,15 @@ class HoTimeVsEta(Plot):
 		fillGraphIn2DHist(graph, hist)
 		hist.SetStats(0)
 		hist.Draw('colz')
+		hist.GetYaxis().SetRangeUser(-60,60)
 		canvas.Update()
 		setupAxes(hist)
-		label = self.drawLabel()
 		canvas.Update()
 
-		self.storeCanvas(canvas, 'timeVsPhi/' +  source + '/iEta' + str(iEta) )
+		self.storeCanvas(canvas, 'timeVsPhi/' +  source + '/iEta' + str(iEta),
+						labelPosition={'x1ndc' : .6, 'y1ndc' : 0.92, 'x2ndc' : .9, 'y2ndc' : 0.95} )
 
-		return canvas,hist,label,graph
+		return canvas,hist,graph
 	
 	#
 	# Plot all iEta bins, time vs iphi
@@ -229,14 +233,13 @@ class HoTimeVsEta(Plot):
 		
 		histHo = None
 		if tight:
-			histHo = self.plotTightHoTimeVsEta()[3][1]
+			histHo = self.plotTightHoTimeVsEta()[2][1]
 		else:
-			histHo = self.plotHoTimeVsEta()[3][1]
+			histHo = self.plotHoTimeVsEta()[2][1]
 			
-		histHo.SetTitle(('Tight ' if tight else '') + 'Unmatched DT + HO')
+		histHo.SetTitle('')
 		
 		canvas = TCanvas('combinedPlot' + ('Tight ' if tight else '') + hist.GetName(),'combinedPlot')
-		canvas.cd().SetTopMargin(.15)
 		histHo.Draw('ap')
 		canvas.Update()
 		canvas.cd().SetTicks(0,0)
@@ -318,12 +321,12 @@ class HoTimeVsEta(Plot):
 		graph2.Draw('same,p')
 		
 		#Label for extra axis
-		axisLabel = TPaveText( 0.83,0.85,0.89,0.9,"NDC")
+		axisLabel = TPaveText( 0.83,0.94,0.9,0.98,"NDC")
 		axisLabel.AddText('#eta_{L1}')
 		axisLabel.SetBorderSize(0)
 		axisLabel.SetFillStyle(0)
 		axisLabel.SetTextColor(colorRwthRot)
-		axisLabel.SetTextSize(0.05)
+		axisLabel.SetTextSize(0.06)
 		axisLabel.Draw()
 		
 		#Legend
@@ -332,8 +335,10 @@ class HoTimeVsEta(Plot):
 		legend.AddEntry(graph1,('Tight ' if tight else '') + 'L1 BXID = 0','pe')
 		legend.Draw()
 		
+		label = self.drawLabel({'x1ndc' : .1, 'y1ndc' : 0.35, 'x2ndc' : .4, 'y2ndc' : 0.4})
+		
 		canvas.Update()
-		self.storeCanvas(canvas, "combinedFractionL1AndHo" + ('Tight' if tight else ''),drawMark=False)
+		self.storeCanvas(canvas, "combinedFractionL1AndHo" + ('Tight' if tight else ''),drawMark=False,drawLabel=False,marginTop=0.08)
 			
 		return histHo, graph1,canvas,A1,f1,A2,f2,box,graph2,axisLabel,legend
 	
@@ -342,34 +347,34 @@ class HoTimeVsEta(Plot):
 	### ============================
 	
 	def plotHoTimeVsEta(self):
-		canvas, hist, label, graph, boxes, tofFunction = self.makeTimeVsEtaPlot('UnmatchedDtHoTimeGraph', "Unmatched DT")
-		self.storeCanvas(canvas,'UnmatchedDtHo_TimeVsEta')
+		canvas, hist, graph, boxes, tofFunction = self.makeTimeVsEtaPlot('UnmatchedDtHoTimeGraph', "Unmatched DT")
+		self.storeCanvas(canvas,'UnmatchedDtHo_TimeVsEta',marginRight=.15)
 		fractionsPerEtaData = self.plotFractionsVsEta(graph,"Fraction of HORecHits at BXID 0",'UnmatchedDtHoTimeGraph_fractionVsEta')
-		return canvas,hist,label,fractionsPerEtaData, boxes, tofFunction
+		return canvas,hist,fractionsPerEtaData, boxes, tofFunction
 	
 	def plotHoTimeVsEtaBxWrong(self):
-		canvas, hist, label, graph, boxes, tofFunction = self.makeTimeVsEtaPlot('UnmatchedDtHoBxNot0TimeGraph',"Unmatched DT BX Wrong")
-		self.storeCanvas(canvas,'UnmatchedDtHoBxNot0TimeGraph_TimeVsEta')
+		canvas, hist, graph, boxes, tofFunction = self.makeTimeVsEtaPlot('UnmatchedDtHoBxNot0TimeGraph',"Unmatched DT BX Wrong")
+		self.storeCanvas(canvas,'UnmatchedDtHoBxNot0TimeGraph_TimeVsEta',marginRight=.15)
 		fractionsPerEtaData = self.plotFractionsVsEta(graph,"Fraction of HORecHits at BXID 0,L1 BX wrong",'UnmatchedDtHoBxNot0TimeGraph_fractionVsEta')
-		return canvas,hist,label,fractionsPerEtaData, boxes, tofFunction
+		return canvas,hist,fractionsPerEtaData, boxes, tofFunction
 	
 	def plotTightHoTimeVsEta(self):
-		canvas, hist, label, graph, boxes, tofFunction = self.makeTimeVsEtaPlot('tight_UnmatchedDtHoTimeGraph',"Tight unmatched DT")
-		self.storeCanvas(canvas,'tight_UnmatchedDtHoTimeGraph_TimeVsEta')
+		canvas, hist, graph, boxes, tofFunction = self.makeTimeVsEtaPlot('tight_UnmatchedDtHoTimeGraph',"Tight unmatched DT")
+		self.storeCanvas(canvas,'tight_UnmatchedDtHoTimeGraph_TimeVsEta',marginRight=.15)
 		fractionsPerEtaData = self.plotFractionsVsEta(graph,"Fraction of HORecHits at BXID 0,Tight L1",'tight_UnmatchedDtHoTimeGraph_fractionVsEta')
-		return canvas,hist,label,fractionsPerEtaData, boxes, tofFunction
+		return canvas,hist,fractionsPerEtaData, boxes, tofFunction
 		
 	def plotTightHoTimeVsEtaBxWrong(self):
-		canvas, hist, label, graph, boxes, tofFunction = self.makeTimeVsEtaPlot('tight_UnmatchedDtHoBxNot0TimeGraph',"Tight unmatched DT BX Wrong")
-		self.storeCanvas(canvas,'tight_UnmatchedDtHoBxNot0TimeGraph_TimeVsEta')
+		canvas, hist, graph, boxes, tofFunction = self.makeTimeVsEtaPlot('tight_UnmatchedDtHoBxNot0TimeGraph',"Tight unmatched DT BX Wrong")
+		self.storeCanvas(canvas,'tight_UnmatchedDtHoBxNot0TimeGraph_TimeVsEta',marginRight=.15)
 		fractionsPerEtaData = self.plotFractionsVsEta(graph,"Fraction of HORecHits at BXID 0,Tight L1 BX wrong",'tight_UnmatchedDtHoBxNot0TimeGraph_fractionVsEta')
-		return canvas,hist,label,fractionsPerEtaData, boxes, tofFunction
+		return canvas,hist,fractionsPerEtaData, boxes, tofFunction
 	
 	def plotHoTimeVsEtaDtRpcTight(self):
-		canvas, hist, label, graph, boxes, tofFunction = self.makeTimeVsEtaPlot('tight_MatchedDtRpcHoTimeGraph')
-		self.storeCanvas(canvas,'tight_MatchedDtRpcHoTimeGraph_TimeVsEta')
+		canvas, hist, graph, boxes, tofFunction = self.makeTimeVsEtaPlot('tight_MatchedDtRpcHoTimeGraph')
+		self.storeCanvas(canvas,'tight_MatchedDtRpcHoTimeGraph_TimeVsEta',marginRight=.15)
 		fractionsPerEtaData = self.plotFractionsVsEta(graph,"Fraction of HORecHits at BXID 0,Tight L1 DT/RPC tight",'tight_MatchedDtRpcHoTimeGraph_fractionVsEta')
-		return canvas,hist,label,fractionsPerEtaData, boxes, tofFunction
+		return canvas,hist,fractionsPerEtaData, boxes, tofFunction
 	
 	def plotL1TimeVsEta(self):
 		canvas, hist, label = self.makeL1TimeVsEtaPlot('bxidVsEta')
