@@ -18,7 +18,8 @@ class GridMatching(Plot):
 	def get3x3MatchingPlot(self,hist3x3,hist3x3Tight,histTitle):
 		eff3x3 = self.fileHandler.getHistogram(hist3x3)
 		eff3x3Tight = self.fileHandler.getHistogram(hist3x3Tight)
-		c = TCanvas(histTitle,histTitle,1200,1200)
+		c = TCanvas(histTitle,histTitle,900,900)
+		c.SetBottomMargin(.12)
 
 		eff3x3.SetMarkerColor(colorRwthDarkBlue)
 		eff3x3.SetLineColor(colorRwthDarkBlue)
@@ -37,98 +38,91 @@ class GridMatching(Plot):
 		setupAxes(eff3x3)
 		setupAxes(eff3x3Tight)
 		
-		return c,eff3x3,eff3x3Tight
+		eff3x3.GetPaintedGraph().GetXaxis().SetTitleOffset(.8)
+		eff3x3.GetPaintedGraph().GetYaxis().SetTitleOffset(.68)
+		
+		legend = TLegend(0.25,0.2,0.83,0.33)
+		
+		return c,eff3x3,eff3x3Tight,legend
 		
 	def plotL13x3AndL1Tight3x3(self):
-		c,effL1Muon3x3,effL1TightMuon3x3 = self.get3x3MatchingPlot('efficiency/gridMatching_loose3x3_Efficiency',
+		c,effL1Muon3x3,effL1TightMuon3x3,legend = self.get3x3MatchingPlot('efficiency/gridMatching_loose3x3_Efficiency',
 			 'efficiency/gridMatching_tight3x3_Efficiency',
-			  'Efficiency for Matching L1 to HO;p_{T,RECO} / GeV;Efficiency')
-		
-		legend = TLegend(0.55,0.1,0.9,0.3)
+			  ';p_{T,RECO} / GeV;Efficiency')
+				
 		legend.AddEntry(effL1Muon3x3,'Matches in 3x3 grid','ep')
 		legend.AddEntry(effL1TightMuon3x3,'Matches from tight in 3x3 grid','ep')
 		legend.Draw()
 
-		label = self.drawLabel()
-
 		c.Update()
-		self.storeCanvas(c,'efficiencyNormalAndTightVsPt_fullRange')
+		self.storeCanvas(c,'efficiencyNormalAndTightVsPt_fullRange',marginRight=.02)
 		
 		effL1Muon3x3.GetPaintedGraph().GetXaxis().SetRangeUser(0,20)
 		effL1Muon3x3.GetPaintedGraph().GetYaxis().SetRangeUser(0,1)
 		
 		c.Update()
-		self.storeCanvas(c,'efficiencyNormalAndTightVsPt_zoom')
+		self.storeCanvas(c,'efficiencyNormalAndTightVsPt_zoom',marginRight=.02)
 		
-		return c, legend, effL1Muon3x3, effL1TightMuon3x3,label
+		return c, legend, effL1Muon3x3, effL1TightMuon3x3
 	
 	def plotL13x3AndL1Tight3x3L1Coordinates(self):
 		
-		c,effL1Muon3x3,effL1TightMuon3x3 = self.get3x3MatchingPlot('efficiency/gridMatching_L1pT_loose3x3_Efficiency',
+		c,effL1Muon3x3,effL1TightMuon3x3,legend = self.get3x3MatchingPlot('efficiency/gridMatching_L1pT_loose3x3_Efficiency',
 			 'efficiency/gridMatching_L1pT_tight3x3_Efficiency',
-			 'Efficiency for Matching L1 to HO;p_{T,L1} / GeV;Efficiency')
+			 ';p_{T,L1} / GeV;Efficiency')
 				
 		c.Update()
-		self.storeCanvas(c,'efficiencyNormalAndTightVsPtL1_fullRange')	
+		self.storeCanvas(c,'efficiencyNormalAndTightVsPtL1_fullRange',marginRight=.02)	
 			
 		effL1Muon3x3.GetPaintedGraph().GetXaxis().SetRangeUser(0,20)
 		effL1Muon3x3.GetPaintedGraph().GetYaxis().SetRangeUser(0,1)
 		
-		legend = TLegend(0.55,0.1,0.9,0.3)
 		legend.AddEntry(effL1Muon3x3,'Matches in 3x3 grid','ep')
 		legend.AddEntry(effL1TightMuon3x3,'Matches from tight in 3x3 grid','ep')
 		legend.Draw()
 
-		label = self.drawLabel()
-
 		c.Update()
-		self.storeCanvas(c,'efficiencyNormalAndTightVsPtL1_zoom')
-		return c, legend, effL1Muon3x3, effL1TightMuon3x3,label
+		self.storeCanvas(c,'efficiencyNormalAndTightVsPtL1_zoom',marginRight=.02)
+		return c, legend, effL1Muon3x3, effL1TightMuon3x3
 
 	def plotL13x3AndL1Tight3x3FromPatL1Pt(self):
 		
-		c,effL1Muon3x3,effL1TightMuon3x3 = self.get3x3MatchingPlot('efficiency/patToL1Muons_L1pT3x3_Efficiency',
+		c,effL1Muon3x3,effL1TightMuon3x3,legend = self.get3x3MatchingPlot('efficiency/patToL1Muons_L1pT3x3_Efficiency',
 			 'efficiency/patTightToL1Muons_L1pT3x3_Efficiency',
-			 'Efficiency (from #font[102]{pat}) for Matching L1 to HO;p_{T,L1} / GeV;Efficiency')
+			 ';p_{T,L1} / GeV;Efficiency')
 				
 		c.Update()
-		self.storeCanvas(c,'efficiencyFromPatNormalAndTightVsPtL1_fullRange')		
+		self.storeCanvas(c,'efficiencyFromPatNormalAndTightVsPtL1_fullRange',marginRight=.02)		
 		
 		effL1Muon3x3.GetPaintedGraph().GetXaxis().SetRangeUser(0,20)
 		effL1Muon3x3.GetPaintedGraph().GetYaxis().SetRangeUser(0,1)
 		
-		legend = TLegend(0.55,0.1,0.9,0.3)
 		legend.AddEntry(effL1Muon3x3,'Matches in 3x3 grid','ep')
 		legend.AddEntry(effL1TightMuon3x3,'Matches from tight in 3x3 grid','ep')
 		legend.Draw()
 
-		label = self.drawLabel()
-
 		c.Update()
-		self.storeCanvas(c,'efficiencyFromPatNormalAndTightVsPtL1_zoom')
-		return c, legend, effL1Muon3x3, effL1TightMuon3x3,label
+		self.storeCanvas(c,'efficiencyFromPatNormalAndTightVsPtL1_zoom',marginRight=.02)
+		return c, legend, effL1Muon3x3, effL1TightMuon3x3
 	
 	def plotL13x3AndL1Tight3x3FromPat(self):
-		c,effL1Muon3x3,effL1TightMuon3x3 = self.get3x3MatchingPlot('efficiency/patToL1Muons3x3_Efficiency',
+		c,effL1Muon3x3,effL1TightMuon3x3,legend = self.get3x3MatchingPlot('efficiency/patToL1Muons3x3_Efficiency',
 			 'efficiency/patTightToL1Muons3x3_Efficiency',
-			 'Efficiency (from #font[102]{pat}) for Matching L1 to HO;p_{T,RECO} / GeV;Efficiency')
+			 ';p_{T,RECO} / GeV;Efficiency')
 				
 		c.Update()
-		self.storeCanvas(c,'efficiencyFromPatNormalAndTightVsPt_fullRange')		
+		self.storeCanvas(c,'efficiencyFromPatNormalAndTightVsPt_fullRange',marginRight=.02)		
 		
 		effL1Muon3x3.GetPaintedGraph().GetXaxis().SetRangeUser(0,20)
 		effL1Muon3x3.GetPaintedGraph().GetYaxis().SetRangeUser(0,1)
 		
-		legend = TLegend(0.55,0.1,0.9,0.3)
 		legend.AddEntry(effL1Muon3x3,'Matches in 3x3 grid','ep')
 		legend.AddEntry(effL1TightMuon3x3,'Matches from tight in 3x3 grid','ep')
 		legend.Draw()
 
-		label = self.drawLabel()
-
 		c.Update()
-		self.storeCanvas(c,'efficiencyFromPatNormalAndTightVsPt_zoom')
-		return c, legend, effL1Muon3x3, effL1TightMuon3x3,label
+		self.storeCanvas(c,'efficiencyFromPatNormalAndTightVsPt_zoom',marginRight=.02)
+		return c, legend, effL1Muon3x3, effL1TightMuon3x3
 	
 	def plotL1GridMatchingEfficiency(self):
 		effL1MuonCentral = self.fileHandler.getHistogram('efficiency/L1MuonCentral_Efficiency')
