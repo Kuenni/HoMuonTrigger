@@ -89,7 +89,7 @@ class QualityCode(Plot):
 				qualityCodes.SetBinContent(qualityCodes.FindBin(i),nPass/float(nTotalHistogram))
 				qualityCodesFail.SetBinContent(qualityCodesFail.FindBin(i),nFail/float(nTotalHistogram))
 		
-		stack = THStack("hstack","Quality Codes in matching to HO (" + gridString + ");;rel. fraction")
+		stack = THStack("hstack",";;rel. fraction")
 		
 		
 		qualityCodes.SetLineColor(colorRwthDarkBlue)
@@ -110,13 +110,11 @@ class QualityCode(Plot):
 		for i in range(1,8):
 			stack.GetXaxis().SetBinLabel(stack.GetXaxis().FindBin(i),self.qualityCodeDict.get(i))
 			
-		legend = TLegend(0.82,0.75,0.99,0.9)
+		legend = TLegend(0.1,0.8,0.3,0.95)
 		legend.AddEntry(qualityCodes,"Passed","f")
 		legend.AddEntry(qualityCodesFail,"Failed","f")
 		legend.Draw()
-		
-		label = self.drawLabel(x1ndc=0.5,y1ndc=0.9,x2ndc=0.8,y2ndc=0.93)
-		
+				
 		setupAxes(stack)
 		stack.SetMinimum(0.75)
 
@@ -124,7 +122,7 @@ class QualityCode(Plot):
 		
 		self.storeCanvas(c, 'qualityCodesStacked' + gridString)
 		
-		return stack,c,qualityCodes,qualityCodesFail,legend,label
+		return stack,c,qualityCodes,qualityCodesFail,legend
 	
 	def plotAllQualitiyCodes(self):	
 		canvas = TCanvas('allQCCodes',"All QC")
@@ -140,7 +138,7 @@ class QualityCode(Plot):
 		histAllCodes.Scale(1/histAllCodes.Integral())
 		histAllCodes.GetXaxis().SetRangeUser(0,8)	
 		histAllCodes.SetStats(0)
-		histAllCodes.SetTitle('L1 muon quality codes;;rel. fraction')
+		histAllCodes.SetTitle(';;rel. fraction')
 		#Label the bins with the meaning of the quality code
 		for i in range(1,8):
 			histAllCodes.GetXaxis().SetBinLabel(histAllCodes.GetXaxis().FindBin(i),self.qualityCodeDict.get(i))
@@ -157,7 +155,7 @@ class QualityCode(Plot):
 			
 		label = self.drawLabel()
 		
-		legend = TLegend(0.1,0.75,0.3,0.9)
+		legend = TLegend(0.1,0.8,0.3,0.95)
 		legend.AddEntry(histAllCodes,"All L1","l")
 		if not self.data: legend.AddEntry(histAllCodesTruth,"L1 Truth","l")
 		legend.Draw()
