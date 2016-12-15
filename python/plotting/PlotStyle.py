@@ -158,6 +158,8 @@ def setupAxes(plot):
 	if hasattr(plot, 'GetZaxis'):
 		plot.GetZaxis().SetTitleFont(62)
 		plot.GetZaxis().SetLabelFont(62)
+	setBigAxisTitles(plot)
+
 	#Do not continue if you're working with TGraphs
 	if (plot.__class__.__name__.find('TGraph') != -1):
 		return
@@ -166,7 +168,6 @@ def setupAxes(plot):
 		plot = plot.GetHistogram()
 	plot.SetTitleFont(62)
 	plot.SetTitleSize(0.06)
-	setBigAxisTitles(plot)
 	setupPalette(plot)
 
 def setBigAxisTitles(plot):
@@ -176,8 +177,10 @@ def setBigAxisTitles(plot):
 	plot.GetXaxis().SetTitleOffset(0.7)
 	plot.GetYaxis().SetTitleSize(0.06)
 	plot.GetYaxis().SetTitleOffset(0.8)
-	plot.GetZaxis().SetTitleSize(0.06)
-	plot.GetZaxis().SetTitleOffset(0.6)
+		# Check for the function. Otherwise it crashes with TGraphs
+	if hasattr(plot, 'GetZaxis'):
+		plot.GetZaxis().SetTitleSize(0.06)
+		plot.GetZaxis().SetTitleOffset(0.6)
 	
 #Set the stat box display Options
 def setStatBoxOptions(plot,option):
