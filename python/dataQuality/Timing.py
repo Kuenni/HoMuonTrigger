@@ -116,6 +116,9 @@ class Timing(Plot):
 		hBxIdBest = self.fileHandler.getHistogram('timingSupport%s_MatchedDtRpcHo_BxId' % TIGHT_TOKEN)
 		hBxIdDtOnly = self.fileHandler.getHistogram('timingSupport%s_UnmatchedDtHo_BxId' % TIGHT_TOKEN)
 		hBxIdOther = self.fileHandler.getHistogram('timingSupport%s_OtherCodesHo_BxId' % TIGHT_TOKEN)
+		hAllL1 = self.fileHandler.getHistogram('count/energyDeposit_L1_Count')
+
+		nL1Muons = hAllL1.Integral()
 
 		if not hBxIdBest or not hBxIdDtOnly or not hBxIdOther:
 			return
@@ -139,18 +142,21 @@ class Timing(Plot):
 		self.debug('Events in BXID 0: %d\t%6.3f%% +/- %6.3f%%' % (dtBx0BestCentral,dtBx0BestCentral/float(dtBx0BestIntegral)*100,calcSigma(dtBx0BestCentral, dtBx0BestIntegral)*100))
 		self.debug('Events in other BXID: %d\t%6.3f%% +/- %6.3f%%' % (dtBx0BestOther,dtBx0BestOther/float(dtBx0BestIntegral)*100,calcSigma(dtBx0BestOther, dtBx0BestIntegral)*100))
 		self.debug('Consistency check (Central + Other, Integral): %d, %d' % (dtBx0BestCentral + dtBx0BestOther,dtBx0BestIntegral))
+		self.debug('Fraction of all L1 Muons: %6.3f +/- %6.3f' % (dtBx0BestIntegral/float(nL1Muons)*100,calcSigma(dtBx0BestIntegral, nL1Muons)*100) )
 		self.debug('')
 		self.debug('DT')
 		self.debug('-'*10)
 		self.debug('Events in BXID 0: %d\t%6.3f%% +/- %6.3f%%' % (dtBx0DtOnlyCentral,dtBx0DtOnlyCentral/float(dtBx0DtOnlyIntegral)*100,calcSigma(dtBx0DtOnlyCentral, dtBx0DtOnlyIntegral)*100))
 		self.debug('Events in other BXID: %d\t%6.3f%% +/- %6.3f%%' % (dtBx0DtOnlyOther,dtBx0DtOnlyOther/float(dtBx0DtOnlyIntegral)*100,calcSigma(dtBx0DtOnlyOther, dtBx0DtOnlyIntegral)*100))
 		self.debug('Consistency check (Central + Other, Integral): %d, %d' % (dtBx0DtOnlyCentral + dtBx0DtOnlyOther,dtBx0DtOnlyIntegral))
+		self.debug('Fraction of all L1 Muons: %6.3f +/- %6.3f' % (dtBx0DtOnlyCentral/float(nL1Muons)*100,calcSigma(dtBx0DtOnlyCentral, nL1Muons)*100) )
 		self.debug('')
 		self.debug('Other')
 		self.debug('-'*10)
 		self.debug('Events in BXID 0: %d\t%6.3f%% +/- %6.3f%%' % (dtBx0OtherCentral,dtBx0OtherCentral/float(dtBx0OtherIntegral)*100,calcSigma(dtBx0OtherCentral, dtBx0OtherIntegral)*100))
 		self.debug('Events in other BXID: %d\t%6.3f%% +/- %6.3f%%' % (dtBx0OtherOther,dtBx0OtherOther/float(dtBx0OtherIntegral)*100,calcSigma(dtBx0OtherOther, dtBx0OtherIntegral)*100))
 		self.debug('Consistency check (Central + Other, Integral): %d, %d' % (dtBx0OtherCentral + dtBx0OtherOther,dtBx0OtherIntegral))
+		self.debug('Fraction of all L1 Muons: %6.3f +/- %6.3f' % (dtBx0OtherCentral/float(nL1Muons)*100,calcSigma(dtBx0OtherCentral, nL1Muons)*100) )
 		self.debug('')
 		self.debug('#'*20)
 
