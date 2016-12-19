@@ -226,6 +226,7 @@ def plotPtResolution():
 	res1 = lib.plotPtResolutionHistograms()
 	res2 = lib.plotTightPtResolution()
 	res3 = lib.plotLoosePtResolution()
+	resTogether = lib.printThresholds()
 	checkUserInput()
 	return
 
@@ -241,6 +242,9 @@ def plotTruthPtResolution():
 	resTruth1 = libTruth.plotPtResolutionHistograms()
 	resTruth2 = libTruth.plotTightPtResolution()
 	resTruth3 = libTruth.plotLoosePtResolution()
+		
+	resTogether = libTruth.printThresholds()
+
 	checkUserInput()
 
 def plotQualityCodes():
