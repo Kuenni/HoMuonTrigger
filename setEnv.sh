@@ -12,7 +12,7 @@ submitData(){
 }
 
 collectData(){
-	runParallel.py -c -d /user/kuensken/tapasTasks/collisionData2015 -s 10 -o SingleMuon2015D.root
+	runParallel.py -c -d /user/kuensken/tapasTasks/collisionData2015 -s 30 -o SingleMuon2015D.root
 }
 
 submitNoPu(){
@@ -20,7 +20,7 @@ submitNoPu(){
 }
 
 collectNoPu(){
-	runParallel.py -c -d /user/kuensken/tapasTasks/SingleMuonGunPooja -s 10 -o NoPUAnalyzed.root
+	runParallel.py -c -d /user/kuensken/tapasTasks/SingleMuonGunPooja -s 30 -o NoPUAnalyzed.root
 }
 
 submitPu(){
@@ -28,7 +28,7 @@ submitPu(){
 }
 
 collectPu(){
-	runParallel.py -c -d /user/kuensken/tapasTasks/SingleMuonGunWithPU -s 10 -o SingleMuWithPu.root
+	runParallel.py -c -d /user/kuensken/tapasTasks/SingleMuonGunWithPU -s 30 -o SingleMuWithPu.root
 }
 
 export -f submitData
