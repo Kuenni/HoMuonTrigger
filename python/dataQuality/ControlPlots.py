@@ -2,11 +2,12 @@
 from plotting.Plot import Plot
 from ROOT import TCanvas,ROOT,TFile,TF1,TLine,gROOT,TPaveText,TH1D,Double,TH2D,THStack,gStyle
 from plotting.PlotStyle import setPlotStyle,drawLabelCmsPrivateSimulation,colorRwthDarkBlue,\
-	setStatBoxOptions, setStatBoxPosition, setupPalette
+	setStatBoxOptions, setStatBoxPosition, setupPalette, colorRwthRot,\
+	colorRwthTuerkis
 from plotting.PlotStyle import colorRwthMagenta,setupAxes,printProgress
 from array import array
 import math
-from plotting.Utils import fillGraphIn2DHist,normalizeTH2DAlongXAxis
+from plotting.Utils import fillGraphIn2DHist,normalizeTH2DAlongXAxis, getLegend
 
 
 class ControlPlots(Plot):
@@ -98,8 +99,34 @@ class ControlPlots(Plot):
 		hist.GetYaxis().SetRangeUser(-.8,.8)
 		hist.GetZaxis().SetTitle('Entries')
 		c.Update()
+		
+		lineMb4P = TLine(.2,-.8,.2,.8)
+		lineMb4P.SetLineWidth(3)
+		lineMb4P.SetLineColor(colorRwthTuerkis)
+		lineMb4P.Draw()
+
+		lineMb4M = TLine(-.2,-.8,-.2,.8)
+		lineMb4M.SetLineWidth(3)
+		lineMb4M.SetLineColor(colorRwthTuerkis)
+		lineMb4M.Draw()
+		
+		lineMb1P = TLine(.3,-.8,.3,.8)
+		lineMb1P.SetLineWidth(3)
+		lineMb1P.SetLineColor(colorRwthMagenta)
+		lineMb1P.Draw()
+
+		lineMb1M = TLine(-.32,-.8,-.32,.8)
+		lineMb1M.SetLineWidth(3)
+		lineMb1M.SetLineColor(colorRwthMagenta)
+		lineMb1M.Draw()
+		
+		legend = getLegend(x1=.1, y1=.7, x2=.4, y2=.95)
+		legend.AddEntry(lineMb1M,'Wheel gap MB1','l')
+		legend.AddEntry(lineMb4M,'Wheel gap MB4','l')
+		legend.Draw()
+		
 		self.storeCanvas(c,'l1EtaVsPatEtaTight',marginRight=.15)
-		return c,hist
+		return c,hist,legend
 
 	def plotL1EtaVsPatEtaFine(self):
 		return self.makeL1EtaVsPatEtaPlot('l1EtaVsPatEtaFine')
