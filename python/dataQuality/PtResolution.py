@@ -130,7 +130,7 @@ class PtResolution(Plot):
 			self.fillDataIntoCache(histTightNoMatch,'L1 Tight !HO')
 
 			self.printProgress(i+1, 121,1)
-	
+
 	###
 	#	Get the intrgrals of the source histograms
 	###
@@ -444,3 +444,57 @@ class PtResolution(Plot):
 	
 		c2 = self.makeIntegralPlot('patToL1Muon')
 		return c,graphL1TightHo,graphL1TightNotHo,legend,label,graphL1Tight,c2
+
+	def printThresholds(self):		
+		pT_list 	= [10,15,20,25,30]
+		dataSets = ['L1','L1 And HO']
+		for pt in pT_list:
+			histPt = self.fileHandler.getHistogram('l1PtResolution/' + self.truthTag + 'L1MuonBin%d' % pt)
+			histPtMatch = self.fileHandler.getHistogram('l1PtResolution/' + self.truthTag + 'L1MuonHoMatchBin%d' % pt)
+			entriesL1 = histPt.Integral(histPt.FindBin(pt),histPt.GetNbinsX())
+			entriesL1AndHo = histPtMatch.Integral(histPt.FindBin(pt),histPt.GetNbinsX())
+			self.debug('     L1 >%3d GeV\tEntries: %6d' % (pt,entriesL1))
+			self.debug('L1 + HO >%3d GeV\tEntries: %6d' % (pt,entriesL1AndHo))
+			
+			for dataset in dataSets:
+				index = self.cached_data['x']['values'].index(pt + 0.5)
+				q25 	= self.cached_data[dataset]['q16'][index]
+				median 	= self.cached_data[dataset]['median'][index]
+				mean 	= self.cached_data[dataset]['mean'][index]
+				q75		= self.cached_data[dataset]['q84'][index]
+				self.debug('%10s pT: %6.3f GeV\tq25: %6.3f GeV\tmedian: '\
+					'%6.3f GeV\tmean: %6.3f GeV\t q75: %6.3f GeV' % (dataset,pt+ 0.5,q25,median,mean,q75))
+		
+		c = TCanvas('L1AndHoTogether')
+
+		graphMean = getTGraphErrors(self.cached_data['x']['values'],
+								self.cached_data['L1']['mean'],
+								ey = self.cached_data['L1']['meanError'],
+								ex=self.cached_data['x']['errors'])
+		
+		graphMeanAndHo = getTGraphErrors(self.cached_data['x']['values'],
+								self.cached_data['L1 And HO']['mean'],
+								ey = self.cached_data['L1 And HO']['meanError'],
+								ex=self.cached_data['x']['errors'])
+		
+		setupAxes(graphMean)
+		graphMean.SetMarkerStyle(20)
+		graphMean.SetMarkerColor(colorRwthDarkBlue)
+		graphMean.SetLineColor(colorRwthDarkBlue)
+		
+		graphMeanAndHo.SetMarkerStyle(21)
+		graphMeanAndHo.SetMarkerColor(colorRwthGruen)
+		graphMeanAndHo.SetLineColor(colorRwthGruen)
+		
+		graphMean.Draw("AP")
+		graphMeanAndHo.Draw("same p")
+		
+		legend = getLegend(y1=.75,y2 = .95,x1=.1,x2=.5)
+		legend.AddEntry(graphMean,'L1 p_{T} Mean','ep')
+		legend.AddEntry(graphMeanAndHo,'L1 And HO p_{T} Mean','ep')
+		legend.Draw()
+				
+		c.Update()
+		
+		return c,graphMean,graphMeanAndHo,legend
+		
