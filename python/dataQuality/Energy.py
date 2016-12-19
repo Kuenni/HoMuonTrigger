@@ -170,7 +170,7 @@ class Energy(Plot):
 		ho.SetStats(0)
 		ho.SetTitle('')#Normalized energy distribution of HO hits')
 		ho.GetXaxis().SetTitle('Reconstructed HO energy / GeV')
-		ho.GetYaxis().SetTitle('rel. fraction')
+		ho.GetYaxis().SetTitle('rel. fraction / 0.05 GeV')
 		ho.GetXaxis().SetRangeUser(-0.2,2)
 	
 		ho.SetLineColor(colorRwthDarkBlue)
