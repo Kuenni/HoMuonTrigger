@@ -2,6 +2,8 @@
 import argparse
 from types import FunctionType
 
+from ROOT import gApplication
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--scripts','-s', dest='scripts', nargs='+',
                    help='The subscript(s) to be called for plotting')
@@ -56,6 +58,7 @@ def updateModuleName(lib):
 
 def checkUserInput():
 	if not args.nonInteractive:
+		gApplication.Run() 
 		raw_input('Continue with <Enter>')
 	return
 
