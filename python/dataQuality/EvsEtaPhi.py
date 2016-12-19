@@ -455,7 +455,7 @@ class EvsEtaPhi(Plot):
 		histAll.Draw('colz')
 		canvas.Update()
 		setupAxes(histAll)
-		setupPalette(histAll,x2ndc=.87)
+		setupPalette(histAll,shiftBy=.05)
 		#label1 = self.drawLabel(x1ndc=.55,x2ndc=.85)
 		histAll.GetZaxis().SetTitleOffset(1.)
 		histAll.GetZaxis().SetRangeUser(0,1250)
@@ -473,7 +473,7 @@ class EvsEtaPhi(Plot):
 		
 		canvas2.Update()
 		setupAxes(histWithHo)
-		setupPalette(histWithHo,x2ndc=.87)
+		setupPalette(histWithHo,shiftBy=.05)
 		histWithHo.GetZaxis().SetTitleOffset(1.)
 		
 		canvas2.Update()
