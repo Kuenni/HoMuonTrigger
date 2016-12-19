@@ -1266,6 +1266,20 @@ void hoMuonAnalyzer::fillAverageEnergyAroundL1Direction(const l1extra::L1MuonPar
 
 			double deltaPhi;
 			deltaPhi = FilterPlugin::wrapCheck(l1Phi,hoMatcher->getRecHitPhi(&*recHitIt));
+			double deltaEta = hoEta - l1Eta;
+
+			histogramBuilder.fillGraph(deltaEta,deltaPhi,"eAvAboveThrCounter" + key);
+			if(recHitIt->energy() >= 0.2){
+				if(hoMatcher->isRecHitInGrid(l1Eta, l1Phi,&*recHitIt,0)){
+					histogramBuilder.fillGraph(deltaEta,deltaPhi,"eAvAboveThrCentral" + key);
+				}
+				else if (hoMatcher->isRecHitInGrid(l1Eta, l1Phi,&*recHitIt,1)) {
+					histogramBuilder.fillGraph(deltaEta,deltaPhi,"eAvAboveThr3x3" + key);
+				}
+				else if (hoMatcher->isRecHitInGrid(l1Eta, l1Phi,&*recHitIt,2)) {
+					histogramBuilder.fillGraph(deltaEta,deltaPhi,"eAvAboveThr5x5" + key);
+				}
+			}
 
 			TH1D* hist1D = new TH1D(("deltaPhi" + key).c_str(),"#Delta#phi;#Delta#phi;N Entries",81,-40*HoMatcher::HALF_HO_BIN/2. - HoMatcher::HALF_HO_BIN/4.
 					,40*HoMatcher::HALF_HO_BIN/2. + HoMatcher::HALF_HO_BIN/4.);
