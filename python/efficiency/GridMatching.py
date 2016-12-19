@@ -7,6 +7,7 @@ from cmath import sqrt
 from plotting.PlotStyle import colorRwthMagenta, colorRwthGruen,\
 	colorRwthDarkBlue, setupAxes, pyplotCmsPrivateLabel
 from plotting.Colors import rwthDarkBlue, rwthGruen, rwthRot
+from libPyROOT import Double
 
 	
 class GridMatching(Plot):
@@ -59,6 +60,12 @@ class GridMatching(Plot):
 		
 		effL1Muon3x3.GetPaintedGraph().GetXaxis().SetRangeUser(0,20)
 		effL1Muon3x3.GetPaintedGraph().GetYaxis().SetRangeUser(0,1)
+		
+		
+		for i in range(3,20):
+			yL1 = effL1Muon3x3.GetPaintedGraph().Eval(i)
+			yL1Tight = effL1TightMuon3x3.GetPaintedGraph().Eval(i)
+			self.debug('L1: (%5.2f)\tTight: (%5.2f)\t Diff: %5.2f'% (yL1,yL1Tight,(yL1Tight-yL1)*100))
 		
 		c.Update()
 		self.storeCanvas(c,'efficiencyNormalAndTightVsPt_zoom',marginRight=.02)
