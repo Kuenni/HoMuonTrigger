@@ -1268,16 +1268,21 @@ void hoMuonAnalyzer::fillAverageEnergyAroundL1Direction(const l1extra::L1MuonPar
 			deltaPhi = FilterPlugin::wrapCheck(l1Phi,hoMatcher->getRecHitPhi(&*recHitIt));
 			double deltaEta = hoEta - l1Eta;
 
-			histogramBuilder.fillGraph(deltaEta,deltaPhi,"eAvAboveThrCounter" + key);
+			double deltaPhiLocalTest;
+			deltaPhiLocalTest = FilterPlugin::wrapCheck(l1Phi-L1PHI_OFFSET,hoMatcher->getRecHitPhi(&*recHitIt));
+			histogramBuilder.fillGraph(deltaEta,deltaPhiLocalTest,"eAvAboveThrCounter" + key);
 			if(recHitIt->energy() >= 0.2){
 				if(hoMatcher->isRecHitInGrid(l1Eta, l1Phi,&*recHitIt,0)){
-					histogramBuilder.fillGraph(deltaEta,deltaPhi,"eAvAboveThrCentral" + key);
+					histogramBuilder.fillGraph(deltaEta,deltaPhiLocalTest,"eAvAboveThrCentral" + key);
 				}
-				else if (hoMatcher->isRecHitInGrid(l1Eta, l1Phi,&*recHitIt,1)) {
-					histogramBuilder.fillGraph(deltaEta,deltaPhi,"eAvAboveThr3x3" + key);
+				if (hoMatcher->isRecHitInGrid(l1Eta, l1Phi,&*recHitIt,1)) {
+					histogramBuilder.fillGraph(deltaEta,deltaPhiLocalTest,"eAvAboveThr3x3" + key);
 				}
-				else if (hoMatcher->isRecHitInGrid(l1Eta, l1Phi,&*recHitIt,2)) {
-					histogramBuilder.fillGraph(deltaEta,deltaPhi,"eAvAboveThr5x5" + key);
+				if (hoMatcher->isRecHitInGrid(l1Eta, l1Phi,&*recHitIt,2)) {
+					histogramBuilder.fillGraph(deltaEta,deltaPhiLocalTest,"eAvAboveThr5x5" + key);
+					if(l1Muon->pt() > 80){
+						histogramBuilder.fillGraph(deltaEta,deltaPhiLocalTest,"eAvAboveThrPt805x5" + key);
+					}
 				}
 			}
 
