@@ -76,6 +76,13 @@ from dataQuality.HoTimeVsEta import HoTimeVsEta
 from dataQuality.DtRpc import DtRpc
 from dataQuality.DttfCands import DttfCands
 from dataQuality.NoL1Muon import NoL1Muon
+from dataQuality.Pileup import Pileup
+
+def plotPileup():
+	lib = Pileup(filename=args.source,data=args.data,debug = args.DEBUG)
+	res = lib.plotPileup()
+	checkUserInput()
+	return
 
 def plotNoL1Muons():
 	lib = NoL1Muon(filename=args.source,data=args.data,debug = args.DEBUG)
@@ -344,7 +351,7 @@ gROOT.ProcessLine(".L $HOMUONTRIGGER_BASE/python/loader.C+");
 
 scripts = ['controlPlots','eVsEtaPhi','timeWindow','ptResolution','ptResolutionTruth','qualityCodes',
 			'counters','thresholdScan','efficiency','energy','compareEnergy','timing','phiShift',
-			'dtOnly', 'hoTimeVsEta','dtRpc','dttfCands','noL1Muons']
+			'dtOnly', 'hoTimeVsEta','dtRpc','dttfCands','noL1Muons','pilup']
 
 if args.scripts:
 	for script in args.scripts:
@@ -384,6 +391,8 @@ if args.scripts:
 			plotDttfCands()
 		elif (script == 'noL1Muons'):
 			plotNoL1Muons()
+		elif (script == 'pileup'):
+			plotPileup()
 		else:
 			print 'Unknown script requested: %s' % (script)
 			print "Available Scripts:"
