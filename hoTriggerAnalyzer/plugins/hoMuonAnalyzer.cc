@@ -260,6 +260,9 @@ hoMuonAnalyzer::analyze(const edm::Event& iEvent,
     	analyzeHoTriggerPrimitives();
     }
 	iEvent.getByLabel(edm::InputTag("offlinePrimaryVertices"), vertexColl);
+	if(vertexColl.isValid()){
+		histogramBuilder.fillMultiplicityHistogram(vertexColl->size(),"primaryVertexSize");
+	}
 	iEvent.getByLabel(edm::InputTag("offlineBeamSpot"),recoBeamSpotHandle);
 
 	histogramBuilder.fillCountHistogram("Events");
