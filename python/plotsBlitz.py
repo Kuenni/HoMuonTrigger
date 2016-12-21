@@ -87,6 +87,9 @@ def plotPileup():
 	return
 
 def plotNoL1Muons():
+	#Skip this if running on data
+	if args.data:
+		return
 	lib = NoL1Muon(filename=args.source,data=args.data,debug = args.DEBUG)
 	updateModuleName(lib)
 	resEmax = lib.plotEMaxNoL1Muon()
