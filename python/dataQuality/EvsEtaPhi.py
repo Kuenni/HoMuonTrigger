@@ -485,3 +485,77 @@ class EvsEtaPhi(Plot):
 		self.storeCanvas(canvas2, 'etaPhiForTightL1AndHo',marginRight=.15)
 		return canvas,histAll,histWithHo,canvas2
 	
+	def printFractionsAboveEthr(self):
+		c = TCanvas('cFractions','fractionsAbveThr')
+
+		gStyle.SetPaintTextFormat('4.2f') 
+		lateralSpreadForPlot = 5;
+		nBinsPerHoPhi = 1;
+		phiBinOffsetFactor = 1/2.;
+		nTotalBinsPhi = 2*nBinsPerHoPhi*lateralSpreadForPlot + 1;
+				
+		histTotal = TH2D('histTightTotal','',nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor,
+			nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor)
+		
+		fillGraphIn2DHist(self.fileHandler.getGraph('graphs/eAvAboveThrCounterL1MuonPresent'), histTotal)
+		
+		hist3x3 = TH2D('histTight5x5',';#Delta#eta;#Delta#phi / rad;Fraction / %',nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor,
+			nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor)
+		
+		fillGraphIn2DHist(self.fileHandler.getGraph('graphs/eAvAboveThr5x5L1MuonPresent'), hist3x3)
+		hist3x3.Divide(histTotal)
+		hist3x3.SetStats(0)
+		hist3x3.GetXaxis().SetRangeUser(-.3,.3)
+		hist3x3.GetYaxis().SetRangeUser(-.3,.3)
+		hist3x3.Draw('colz')
+		c.Update()
+		setupAxes(hist3x3)
+		setupPalette(hist3x3, shiftBy=.05)
+		hCopy = hist3x3.Clone('hCloneTight')
+		hCopy.Scale(100)
+		hCopy.SetMarkerSize(2)
+		hCopy.Draw('text,same')
+		self.storeCanvas(c,'fractionAboveThr',marginRight=.15)
+		return hist3x3,hCopy,c
+	
+	def printFractionsAboveEthrTight(self):
+		c = TCanvas('cFractionsTight','fractionsTightAbveThr')
+
+		gStyle.SetPaintTextFormat('4.2f') 
+		lateralSpreadForPlot = 5;
+		nBinsPerHoPhi = 1;
+		phiBinOffsetFactor = 1/2.;
+		nTotalBinsPhi = 2*nBinsPerHoPhi*lateralSpreadForPlot + 1;
+				
+		histTotal = TH2D('histTightTotal','',nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor,
+			nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor)
+		
+		fillGraphIn2DHist(self.fileHandler.getGraph('graphs/eAvAboveThrCounterpatTightToL1Muons'), histTotal)
+		
+		hist3x3 = TH2D('histTight5x5',';#Delta#eta;#Delta#phi / rad;Fraction / %',nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor,
+			nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor)
+		
+		fillGraphIn2DHist(self.fileHandler.getGraph('graphs/eAvAboveThr5x5patTightToL1Muons'), hist3x3)
+		hist3x3.Divide(histTotal)
+		hist3x3.SetStats(0)
+		hist3x3.GetXaxis().SetRangeUser(-.3,.3)
+		hist3x3.GetYaxis().SetRangeUser(-.3,.3)
+		hist3x3.Draw('colz')
+		c.Update()
+		setupAxes(hist3x3)
+		setupPalette(hist3x3, shiftBy=.05)
+		hCopy = hist3x3.Clone('hCloneTight')
+		hCopy.Scale(100)		
+		hCopy.SetMarkerSize(2)
+		hCopy.Draw('text,same')
+		self.storeCanvas(c,'fractionAboveThrTight',marginRight=.15)
+
+		return hist3x3,hCopy,c

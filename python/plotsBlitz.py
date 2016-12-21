@@ -180,6 +180,8 @@ def plotEVsEtaPhi():
 	res7 = lib.plotEavPerWheelForTightMuons()
 	resWheelwise = lib.plotEAveragePerWheel()
 	resEtaPhiTight = lib.plotEtaPhiForTightL1()
+	resTest = lib.printFractionsAboveEthr()
+	resTes2 = lib.printFractionsAboveEthrTight()
 	checkUserInput()
 	return
 
