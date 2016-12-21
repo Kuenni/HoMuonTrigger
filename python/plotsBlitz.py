@@ -79,8 +79,10 @@ from dataQuality.NoL1Muon import NoL1Muon
 from dataQuality.Pileup import Pileup
 
 def plotPileup():
-	lib = Pileup(filename=args.source,data=args.data,debug = args.DEBUG)
-	res = lib.plotPileup()
+	#Do special handling of this case since a special file is needed
+	if not args.plotAll:
+		lib = Pileup(filename=args.source,data=args.data,debug = args.DEBUG)
+		res = lib.plotPileup()
 	checkUserInput()
 	return
 
