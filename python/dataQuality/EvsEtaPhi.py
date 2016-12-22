@@ -1,15 +1,18 @@
 #!/usr/bin/python
 from ROOT import TCanvas,ROOT,TFile,TF1,TLine,gROOT,TPaveText,TH1D,Double,TH2D,THStack,gStyle,TMarker
-from plotting.PlotStyle import getLabelCmsPrivateSimulation,setupPalette
+from plotting.PlotStyle import getLabelCmsPrivateSimulation,setupPalette,\
+	getTH2D
 from plotting.PlotStyle import setupAxes,drawHoBoxes
 from plotting.PlotStyle import setStatBoxOptions,setStatBoxPosition,pyplotCmsPrivateLabel
-from plotting.Utils import setupEAvplot, L1_PHI_BIN, L1_ETA_BIN, calcPercent, calcSigma
+from plotting.Utils import setupEAvplot, L1_PHI_BIN, L1_ETA_BIN, calcPercent, calcSigma,\
+	fillGraphIn2DHist
 
 from plotting.Plot import Plot
 
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+from OfflineAnalysis.HoMatcher import HO_BIN
 
 class EvsEtaPhi(Plot):
 	
@@ -37,7 +40,7 @@ class EvsEtaPhi(Plot):
 		hSum.GetXaxis().SetRangeUser(-0.6,0.6)
 		hSum.GetYaxis().SetRangeUser(-0.6,0.6)
 		hSum.GetZaxis().SetTitle('Reconstructed Energy / GeV')
-		hSum.SetTitle(';#Delta#eta;#Delta#phi;Reconstructed Energy / GeV')#'Average Energy in HO tiles around L1 direction
+		hSum.SetTitle(';#Delta#eta;#Delta#phi / rad;Reconstructed Energy / GeV')#'Average Energy in HO tiles around L1 direction
 		hSum.Draw('colz')
 						
 		canvas.Update()
@@ -46,7 +49,7 @@ class EvsEtaPhi(Plot):
 		setupAxes(hSum)	
 		setStatBoxOptions(hSum,1100)
 		setStatBoxPosition(hSum,x1=.65,x2=.85)
-		setupPalette(hSum,x2ndc=.87)
+		setupPalette(hSum,shiftBy=.05)
 	
 		canvas.Update()
 		self.storeCanvas(canvas,'averageEnergy',marginRight=.15)
@@ -296,7 +299,7 @@ class EvsEtaPhi(Plot):
 		hCounter = self.fileHandler.getHistogram('deltaEtaDeltaPhiEnergy/averageEMaxAroundPoint' + source + '_2dCounter')
 		hCounter.GetXaxis().SetRangeUser(-.6,.6)
 		hCounter.GetYaxis().SetRangeUser(-.6,.6)
-		hCounter.SetTitle(';#Delta#eta;#Delta#phi;Entries')#title +
+		hCounter.SetTitle(';#Delta#eta;#Delta#phi / rad;Entries')#title +
 		hCounter.SetStats(0)
 		hCounter.Draw('colz')
 		canvas.Update()		
@@ -451,11 +454,11 @@ class EvsEtaPhi(Plot):
 		canvas.cd().SetRightMargin(.15)
 		histAll.SetStats(0)
 		histAll.GetXaxis().SetRangeUser(-1,1)
-		histAll.SetTitle(histAll.GetTitle() + ';#eta_{L1};#phi_{L1};Entries')
+		histAll.SetTitle(histAll.GetTitle() + ';#eta_{L1};#phi_{L1} / rad;Entries')
 		histAll.Draw('colz')
 		canvas.Update()
 		setupAxes(histAll)
-		setupPalette(histAll,x2ndc=.87)
+		setupPalette(histAll,shiftBy=.05)
 		#label1 = self.drawLabel(x1ndc=.55,x2ndc=.85)
 		histAll.GetZaxis().SetTitleOffset(1.)
 		histAll.GetZaxis().SetRangeUser(0,1250)
@@ -466,14 +469,14 @@ class EvsEtaPhi(Plot):
 		canvas2.cd().SetRightMargin(.15)
 		histWithHo.SetStats(0)
 		histWithHo.GetXaxis().SetRangeUser(-1,1)
-		histWithHo.SetTitle(histWithHo.GetTitle() + ';#eta_{L1};#phi_{L1};Entries')
+		histWithHo.SetTitle(histWithHo.GetTitle() + ';#eta_{L1};#phi_{L1} / rad;Entries')
 		histWithHo.Draw('colz')
 		#label2 = self.drawLabel(x1ndc=.55,x2ndc=.85)
 		histWithHo.GetZaxis().SetRangeUser(0,1250)
 		
 		canvas2.Update()
 		setupAxes(histWithHo)
-		setupPalette(histWithHo,x2ndc=.87)
+		setupPalette(histWithHo,shiftBy=.05)
 		histWithHo.GetZaxis().SetTitleOffset(1.)
 		
 		canvas2.Update()
@@ -482,3 +485,77 @@ class EvsEtaPhi(Plot):
 		self.storeCanvas(canvas2, 'etaPhiForTightL1AndHo',marginRight=.15)
 		return canvas,histAll,histWithHo,canvas2
 	
+	def printFractionsAboveEthr(self):
+		c = TCanvas('cFractions','fractionsAbveThr')
+
+		gStyle.SetPaintTextFormat('4.2f') 
+		lateralSpreadForPlot = 5;
+		nBinsPerHoPhi = 1;
+		phiBinOffsetFactor = 1/2.;
+		nTotalBinsPhi = 2*nBinsPerHoPhi*lateralSpreadForPlot + 1;
+				
+		histTotal = TH2D('histTightTotal','',nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor,
+			nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor)
+		
+		fillGraphIn2DHist(self.fileHandler.getGraph('graphs/eAvAboveThrCounterL1MuonPresent'), histTotal)
+		
+		hist3x3 = TH2D('histTight5x5',';#Delta#eta;#Delta#phi / rad;Fraction / %',nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor,
+			nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor)
+		
+		fillGraphIn2DHist(self.fileHandler.getGraph('graphs/eAvAboveThr5x5L1MuonPresent'), hist3x3)
+		hist3x3.Divide(histTotal)
+		hist3x3.SetStats(0)
+		hist3x3.GetXaxis().SetRangeUser(-.3,.3)
+		hist3x3.GetYaxis().SetRangeUser(-.3,.3)
+		hist3x3.Draw('colz')
+		c.Update()
+		setupAxes(hist3x3)
+		setupPalette(hist3x3, shiftBy=.05)
+		hCopy = hist3x3.Clone('hCloneTight')
+		hCopy.Scale(100)
+		hCopy.SetMarkerSize(2)
+		hCopy.Draw('text,same')
+		self.storeCanvas(c,'fractionAboveThr',marginRight=.15)
+		return hist3x3,hCopy,c
+	
+	def printFractionsAboveEthrTight(self):
+		c = TCanvas('cFractionsTight','fractionsTightAbveThr')
+
+		gStyle.SetPaintTextFormat('4.2f') 
+		lateralSpreadForPlot = 5;
+		nBinsPerHoPhi = 1;
+		phiBinOffsetFactor = 1/2.;
+		nTotalBinsPhi = 2*nBinsPerHoPhi*lateralSpreadForPlot + 1;
+				
+		histTotal = TH2D('histTightTotal','',nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor,
+			nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor)
+		
+		fillGraphIn2DHist(self.fileHandler.getGraph('graphs/eAvAboveThrCounterpatTightToL1Muons'), histTotal)
+		
+		hist3x3 = TH2D('histTight5x5',';#Delta#eta;#Delta#phi / rad;Fraction / %',nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor,
+			nTotalBinsPhi,-lateralSpreadForPlot*HO_BIN - HO_BIN*phiBinOffsetFactor,
+			lateralSpreadForPlot*HO_BIN + HO_BIN*phiBinOffsetFactor)
+		
+		fillGraphIn2DHist(self.fileHandler.getGraph('graphs/eAvAboveThr5x5patTightToL1Muons'), hist3x3)
+		hist3x3.Divide(histTotal)
+		hist3x3.SetStats(0)
+		hist3x3.GetXaxis().SetRangeUser(-.3,.3)
+		hist3x3.GetYaxis().SetRangeUser(-.3,.3)
+		hist3x3.Draw('colz')
+		c.Update()
+		setupAxes(hist3x3)
+		setupPalette(hist3x3, shiftBy=.05)
+		hCopy = hist3x3.Clone('hCloneTight')
+		hCopy.Scale(100)		
+		hCopy.SetMarkerSize(2)
+		hCopy.Draw('text,same')
+		self.storeCanvas(c,'fractionAboveThrTight',marginRight=.15)
+
+		return hist3x3,hCopy,c

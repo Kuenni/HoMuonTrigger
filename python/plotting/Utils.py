@@ -58,6 +58,8 @@ def fillGraphIn2DHist(graph,hist):
 	x = Double(0)
 	y = Double(0)
 	commandLine.output('Filling graph in 2D histogram:')
+	if not graph:
+		commandLine.error('Graph is null!')
 	nTotal = graph.GetN()
 	for i in range(0,nTotal):
 		graph.GetPoint(i,x,y)
