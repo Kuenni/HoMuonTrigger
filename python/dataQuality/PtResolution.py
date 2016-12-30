@@ -81,7 +81,7 @@ class PtResolution(Plot):
 			xList.append(h.GetBinCenter(i+1))
 			yList.append(h.GetBinContent(i+1))
 
-		return TMath.Median<'Double_t'>(len(xList),np.array(xList,'d'),np.array(yList,'d'))
+		return TMath.Median(Double)(len(xList),np.array(xList,'d'),np.array(yList,'d'))
 
 	def getQuantiles(self, h ):
 		q = np.zeros(5)
