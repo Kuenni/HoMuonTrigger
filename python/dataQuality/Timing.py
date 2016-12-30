@@ -207,7 +207,7 @@ class Timing(Plot):
 		hBxIdDtOnly.GetYaxis().SetTitleOffset(1)
 		hBxIdOther.GetYaxis().SetTitleOffset(1)
 		
-		self.storeCanvas(c2,"bxId" + TIGHT_TOKEN, drawLabel = False)
+		self.storeCanvas(c2,"bxId" + TIGHT_TOKEN, drawMark=False, drawLabel = False)
 
 		return c2,hBxIdBest,hBxIdDtOnly,hBxIdOther
 
@@ -247,7 +247,6 @@ class Timing(Plot):
 		#hBxIdBest.GetYaxis().SetRangeUser(2e-4,1)
 		hBxIdBest.Scale(1/hBxIdBest.Integral())
 		setupAxes(hBxIdBest)
-		setBigAxisTitles(hBxIdBest)
 		hBxIdBest.Draw()
 		
 		### Plot unmatched DT
@@ -260,7 +259,6 @@ class Timing(Plot):
 		#hBxIdDtOnly.GetYaxis().SetRangeUser(2e-4,1)
 		hBxIdDtOnly.Scale(1/hBxIdDtOnly.Integral())
 		setupAxes(hBxIdDtOnly)
-		setBigAxisTitles(hBxIdDtOnly)
 		hBxIdDtOnly.Draw()
 		
 		### Plot other codes
@@ -273,14 +271,13 @@ class Timing(Plot):
 		#hBxIdOther.GetYaxis().SetRangeUser(2e-4,1)
 		hBxIdOther.Scale(1/hBxIdOther.Integral())
 		setupAxes(hBxIdOther)
-		setBigAxisTitles(hBxIdOther)
 		hBxIdOther.Draw()
 		
 		hBxIdBest.GetYaxis().SetTitleOffset(1)
 		hBxIdDtOnly.GetYaxis().SetTitleOffset(1)
 		hBxIdOther.GetYaxis().SetTitleOffset(1)
 
-		self.storeCanvas(c2,"matchedHoTime")
+		self.storeCanvas(c2,"matchedHoTime",drawLabel=False, drawMark=False)
 		
 		c = TCanvas('cDtOnlyWithTight',"DT only with tight",600,600)
 		c.SetLogy()
@@ -605,6 +602,7 @@ class Timing(Plot):
 		for i in range(1,6):
 			hist.GetXaxis().SetBinLabel(i+1,x[i-1])
 		hist.GetXaxis().SetLabelFont(62)
+		hist.GetXaxis().SetLabelSize(.06)
 		hist.GetYaxis().SetLabelFont(62)
 		hist.GetYaxis().SetTitleFont(62)
 		hist.Scale(1/hist.Integral())
@@ -614,8 +612,7 @@ class Timing(Plot):
 		hist.Draw()
 		
 		#add label
-		label = getLabelCmsPrivateSimulation()
-		label.Draw()
+		label = self.drawLabel(labelPosition={'x1ndc' : 0.3, 'x2ndc' : .9, 'y1ndc' : .9, 'y2ndc' : .94})
 		
 		#Make a histogram to grey out the CSC parts
 		histGrey = TH1D('greyHist','grey hist',2,3.5,5.5)
@@ -649,6 +646,7 @@ class Timing(Plot):
 		for i in range(1,6):
 			hist2.GetXaxis().SetBinLabel(i+1,x[i-1])
 		hist2.GetXaxis().SetLabelFont(62)
+		hist2.GetXaxis().SetLabelSize(.06)
 		hist2.GetYaxis().SetLabelFont(62)
 		hist2.GetYaxis().SetTitleFont(62)
 		hist2.Scale(1/hist2.Integral())
@@ -658,15 +656,15 @@ class Timing(Plot):
 		hist2.Draw()
 		
 		#add label
-		label2 = getLabelCmsPrivateSimulation()
-		label2.Draw()
+		label2 = self.drawLabel(labelPosition={'x1ndc' : 0.3, 'x2ndc' : .9, 'y1ndc' : .9, 'y2ndc' : .94})
+
 		
 		histGrey.DrawCopy('same')
 		pText2 = pText.Clone("pText2")
 		pText2.Draw()
 		
 		canvas.Update()
-		self.storeCanvas(canvas,"bxWrongDetectorContributions")
+		self.storeCanvas(canvas,"bxWrongDetectorContributions",drawMark=False,drawLabel=False)
 		
 		
 		return canvas,hist,label,histGrey,pText,pText2,label2,hist2

@@ -120,14 +120,22 @@ class RootFileHandler:
 		for i in range(0,fileRange):
 			rootfile = TFile(self.getFile(i),'READ')
 			g = rootfile.Get(graphname)
-			nTotal += g.GetN()
+			try :
+				nTotal += g.GetN()
+			except AttributeError:
+				if self.DEBUG: commandLine.warning('Could not get graph %s for every source file' % graphname)
+				continue
 		commandLine.output('getGraph(%s) found %d points to process' % (graphname,nTotal))
 		for i in range(1,fileRange):
 			rootfile = TFile(self.getFile(i),'READ')
 			g2 = rootfile.Get(graphname)
+			try:
+				nEvents = g2.GetN()
+			except AttributeError:
+				continue
 			x = Double(0)
 			y = Double(0)
-			for j in range(0,g2.GetN()):
+			for j in range(0,nEvents):
 				counter += 1
 				if (counter % 10000 == 0):
 					commandLine.printProgress(counter,nTotal)

@@ -251,6 +251,7 @@ class PtResolution(Plot):
 
 	def makeQuantilePlot(self,dataSet):
 		c = TCanvas(dataSet + 'quantiles')
+		c.cd().SetBottomMargin(.15)
 
 		graphMean = getTGraphErrors(self.cached_data['x']['values'],
 								self.cached_data[dataSet]['mean'],
@@ -296,7 +297,7 @@ class PtResolution(Plot):
 		graphQ50.Draw('same,l')
 
 		
-		legend = getLegend(y1=.75,y2 = .95,x1=.1,x2=.5)
+		legend = getLegend(y1=.75,y2 = .95,x1=.11,x2=.5)
 		legend.AddEntry(graphMean,dataSet + ' p_{T} Mean','ep')
 		legend.AddEntry(graphMedian,dataSet + ' p_{T} Median','l')
 		legend.AddEntry(graphShape68,dataSet + ' p_{T} Q_{25} - Q_{75}','f')
@@ -304,7 +305,8 @@ class PtResolution(Plot):
 		legend.Draw()
 				
 		c.Update()
-		self.storeCanvas(c,'quantiles_' + self.truthTag + '_' + dataSet.replace(' ','_').replace('!','Not'), marginRight = .02)
+		graphShape68.GetXaxis().SetTitleOffset(1)
+		self.storeCanvas(c,'quantiles_' + self.truthTag + '_' + dataSet.replace(' ','_').replace('!','Not'), marginRight = .02,marginLeft=.11)
 		return c,graphMean,legend,graphMedian,graphShape68,graphQ50
 
 	def plotTightPtResolution(self):

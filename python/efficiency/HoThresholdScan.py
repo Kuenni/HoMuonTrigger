@@ -39,6 +39,7 @@ class HoThresholdScan(Plot):
 		graph.SetTitle(';E_{Thr} / GeV;# per Event')#Number of HORecHits per Event;E_{Thr} / GeV;# per Event')
 		setupAxes(graph)
 		graph.GetXaxis().SetRangeUser(0,2)
+		graph.SetMinimum(6e-2)
 		graph.Draw('ap')
 		
 		graphMean = getTGraphErrors(xVals, meanValues)#, ey=rmsValues)
