@@ -304,7 +304,7 @@ class EvsEtaPhi(Plot):
 		hCounter.Draw('colz')
 		canvas.Update()		
 		setupAxes(hCounter)
-		setupPalette(hCounter,x2ndc=.87)
+		setupPalette(hCounter,shiftBy=.05)
 		canvas.Update()
 		#boxes = drawHoBoxes(canvas)
 		self.storeCanvas(canvas,'eMaxCounts' + source,marginRight=.15)

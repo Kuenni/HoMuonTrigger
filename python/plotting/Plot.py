@@ -64,7 +64,7 @@ class Plot:
 			markPosition = {'x1ndc' : marginLeft - 0.007, 'y1ndc' : 0.95, 'x2ndc' : marginLeft + 0.226, 'y2ndc' : 0.99}
 			
 		if labelPosition == None:
-			labelPosition = {'x1ndc' : .7 - marginRight, 'y1ndc' : 0.95, 'x2ndc' : 1 - marginRight, 'y2ndc' : 0.98}
+			labelPosition = {'x1ndc' : .55 - marginRight, 'y1ndc' : 0.95, 'x2ndc' : 1 - marginRight, 'y2ndc' : 0.995}
 		
 		if(plotname.find('/') != -1):
 			if( not os.path.exists(self.plotSubdir + '/' + plotname[0:plotname.rfind('/')])):
@@ -86,7 +86,7 @@ class Plot:
 				
 		return
 	
-	def drawLabel(self,labelPosition = {'x1ndc' : 0.6, 'y1ndc' : 0.95, 'x2ndc' : 0.9, 'y2ndc' : 0.98}):
+	def drawLabel(self,labelPosition = {'x1ndc' : 0.3, 'y1ndc' : 0.95, 'x2ndc' : 0.9, 'y2ndc' : 0.98}):
 		if self.data:
 			label = drawLabelCmsPrivateData(labelPosition['x1ndc'],labelPosition['y1ndc'],labelPosition['x2ndc'],labelPosition['y2ndc'])
 		else:

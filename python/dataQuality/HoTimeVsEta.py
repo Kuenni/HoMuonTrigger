@@ -151,7 +151,7 @@ class HoTimeVsEta(Plot):
 		setupAxes(hist)
 		canvas.Update()
 
-		self.storeCanvas(canvas, 'timeVsPhi/' +  source + '/iEta' + str(iEta),
+		self.storeCanvas(canvas, 'timeVsPhi/' +  source + '_iEta' + str(iEta),
 						labelPosition={'x1ndc' : .6, 'y1ndc' : 0.92, 'x2ndc' : .9, 'y2ndc' : 0.95} )
 
 		return canvas,hist,graph

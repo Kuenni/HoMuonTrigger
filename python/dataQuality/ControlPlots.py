@@ -208,7 +208,7 @@ class ControlPlots(Plot):
 		hoEtaPhi.SetStats(0)
 		setupAxes(hoEtaPhi)
 		#hoEtaPhi.GetZaxis().SetTitleOffset(.9)
-		setupPalette(hoEtaPhi,x2ndc=.87)
+		setupPalette(hoEtaPhi,shiftBy=.05)
 		canvas.Update()
 		self.storeCanvas(canvas,"hoEtaPhi",marginRight=.15)
 		return canvas,hoEtaPhi
