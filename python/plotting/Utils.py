@@ -213,7 +213,7 @@ def getMedian(h):
 		#
 		# return TMath.Median('double')(len(xList),np.array(xList,'d'),np.array(yList,'d'))
 		#
-		return TMath.Median(len(xList),np.array(xList,'d'),np.array(yList,'d'))
+		return TMath.Median(Double)(len(xList),np.array(xList,'d'),np.array(yList,'d'))
 
 def getXinNDC(x):
 	gPad.Update()
