@@ -326,7 +326,7 @@ def plotEnergy():
 	return
 
 def plotCompareEnergy():
-	lib = Comparison(data = args.data,debug = args.DEBUG)
+	lib = Comparison(filename=args.source, data = args.data,debug = args.DEBUG)
 	updateModuleName(lib)
 	resL1Count = lib.compareL1Count()
 	resEPerWheel = lib.compareEnergyPerWheel()

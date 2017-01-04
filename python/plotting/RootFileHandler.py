@@ -37,6 +37,12 @@ class RootFileHandler:
 		self.cmsswModuleName = 'hoMuonAnalyzer'
 		pass
 
+	### =============================
+	### Get the path to the ROOT File
+	### =============================
+	def getFilePath(self):
+		return self.filepath
+
 	### ================================================================
 	### Get the full file path for a file connected to this file handler
 	### ================================================================
