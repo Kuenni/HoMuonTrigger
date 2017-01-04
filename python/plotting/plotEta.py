@@ -6,8 +6,6 @@ import PlotStyle
 import numpy as np
 
 PlotStyle.setPlotStyle()
-gStyle.SetPalette(1)
-
 if(len(sys.argv) < 2):
     print 'Error! Filename as first argument needed.'
     sys.exit(1)

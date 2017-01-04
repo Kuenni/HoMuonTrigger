@@ -6,8 +6,6 @@ import PlotStyle
 import numpy as np
 
 PlotStyle.setPlotStyle()
-gStyle.SetPalette(1)
-
 
 DEBUG = 1
 prefix = '[plotEtaPhi] '

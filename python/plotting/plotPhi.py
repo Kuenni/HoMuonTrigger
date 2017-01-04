@@ -9,7 +9,6 @@ DEBUG = 1
 prefix = '[plotL1Phi] '
 
 PlotStyle.setPlotStyle()
-gStyle.SetPalette(1)
 
 def plotPhi(folder):
 	

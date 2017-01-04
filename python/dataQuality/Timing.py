@@ -684,7 +684,6 @@ class Timing(Plot):
 		for i in stack.GetHists():
 			histNew.Add(i)
 	
-		gStyle.SetPalette(1)
 		histNew.SetStats(0)
 		histNew.Draw('COLZ')
 		canvas.Update()
@@ -715,7 +714,6 @@ class Timing(Plot):
 		for i in stack.GetHists():
 			histNew.Add(i)
 	
-		gStyle.SetPalette(1)
 		histNew.SetStats(0)
 		setupAxes(histNew)
 		histNew.Draw('COLZ')
