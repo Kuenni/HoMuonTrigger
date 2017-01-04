@@ -5,19 +5,21 @@ from plotting.PlotStyle import colorRwthDarkBlue, colorRwthMagenta,\
 from plotting.Utils import getLegend,makeResidualsPad
 from plotting.Plot import Plot
 
-SIMULATION_FILE_SCHEME = '/user/kuensken/CMSSW/CMSSW_7_4_15/src/HoMuonTrigger/PostLS1/SingleMuonGunPooja/NoPUAnalyzed'
-SIMULATION_PU_FILE_SCHEME = '/user/kuensken/CMSSW/CMSSW_7_4_15/src/HoMuonTrigger/PostLS1/SingleMuonGunWithPU/SingleMuWithPu'
-DATA_FILE_SCHEME = '/user/kuensken/CMSSW/CMSSW_7_4_15/src/HoMuonTrigger/PostLS1/collisionData2015/SingleMuon2015D'
+SIMULATION_FILE_SCHEME = 'NoPUAnalyzed'
+SIMULATION_PU_FILE_SCHEME = 'SingleMuWithPu'
+DATA_FILE_SCHEME = 'SingleMuon2015D'
 
 class Comparison(Plot):
 	#Initialize
-	def __init__(self,data,debug):
+	def __init__(self,filename,data,debug):
 		Plot.__init__(self,debug = debug, data = data)
 		self.createPlotSubdir('energyComparison')
 		self.createPlotSubdir('l1CountComparison')
-		self.fileHandlerSimulation = self.createFileHandler(SIMULATION_FILE_SCHEME)
-		self.fileHandler = self.createFileHandler(DATA_FILE_SCHEME)
-		self.fileHandlerSimulationPu = self.createFileHandler(SIMULATION_PU_FILE_SCHEME)
+		self.fileHandlerLocal = self.createFileHandler(filename)
+		localPath = self.fileHandlerLocal.getFilePath()
+		self.fileHandlerSimulation = self.createFileHandler(localPath + '/' + SIMULATION_FILE_SCHEME)
+		self.fileHandler = self.createFileHandler(localPath + '/' + DATA_FILE_SCHEME)
+		self.fileHandlerSimulationPu = self.createFileHandler(localPath + '/' + SIMULATION_PU_FILE_SCHEME)
 	
 	def compareEnergyPerWheel(self):	
 
